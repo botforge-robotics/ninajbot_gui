@@ -1,12 +1,12 @@
 <template>
   <div class="home-page h-100">
     <jumbotron-Header title="Teleop"></jumbotron-Header>
-    <div class="d-flex mt-4 flex-row w-100 text-center">
-      <p class="col col-6 fs-3 fw-semibold  fst-italic">Camera Feed</p>
+    <div class="d-flex mt-4 flex-row w-100 text-center justify-content-evenly">
+      <p class="col col-6 fs-3 fw-semibold  fst-italic" style="width:640px;">Camera Feed</p>
       <p class="col col-6 fs-3 fw-semibold  fst-italic">Control</p>
     </div>
     <div class="teleopConatiner">
-      <div class="d-flex flex-row justify-content-center">
+      <div class="d-flex flex-row justify-content-evenly">
         <image-view class="col p-0 col-lg-6"></image-view>
         <joy-stick class="col col-lg-6 ps-3"></joy-stick>
       </div>
