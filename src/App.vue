@@ -106,7 +106,8 @@ export default {
   },
 
   mounted() {
-    window.document.title = "NinjaBot-GUI";
+    
+    window.document.title = "NinjaBot GUI";
     //ros callbacks
     let vm = this;
     this.ros.on("connection", function () {

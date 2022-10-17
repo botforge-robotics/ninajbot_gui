@@ -1,5 +1,5 @@
 <template>
-  <img id="map" />
+  <div id="map"></div>
 </template>
 
 <script>
