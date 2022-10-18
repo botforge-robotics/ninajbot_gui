@@ -1,4 +1,5 @@
 import ROSLIB from "roslib";
+import store from "@/store";
 export const changeRoboConnectionStatus = (state, payload) => {
   state.roboConnectionStatus = payload;
 };
@@ -49,6 +50,10 @@ export const publishVel = (state, payload) => {
 export const publishEyes = (state, payload) => {
   var msg = new ROSLIB.Message({ type: String(payload.data) });
   state.eyes_pub.publish(msg);
+  store.commit("showToast", {
+    time: Date.now().toString(),
+    message: `Eyes message published! "${payload.data}".`,
+  });
 };
 export const publishFocuslights = (state, payload) => {
   var msg = new ROSLIB.Message({
@@ -56,6 +61,10 @@ export const publishFocuslights = (state, payload) => {
     left_light: Boolean(payload.left),
   });
   state.focus_light_pub.publish(msg);
+  store.commit("showToast", {
+    time: Date.now().toString(),
+    message: `Focus lights message published! "Left:"${payload.left?"ON":"OFF"},"Right:"${payload.right?"ON":"OFF"}`,
+  });
 };
 export const publishLcd = (state, payload) => {
   var msg = new ROSLIB.Message({
@@ -63,6 +72,10 @@ export const publishLcd = (state, payload) => {
     row: Number(payload.row),
   });
   state.lcd_pub.publish(msg);
+  store.commit("showToast", {
+    time: Date.now().toString(),
+    message: `Lcd message published! "${payload.message}" to line ${payload.row}.`,
+  });
 };
 export const updateFullAnim = (state, payload) => {
   state.fullAnim = payload.data;
