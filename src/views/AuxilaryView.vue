@@ -24,7 +24,7 @@
         -->
           <div class="card mb-4">
             <div class="card-header">Eyes</div>
-            <div class="card-body">
+            <div class="card-body d-flex flex-column mb-3">
               <h5 class="card-title">Change eyes style</h5>
               <div
                 class="btn-group mb-3"
@@ -38,6 +38,9 @@
                   id="neutral_radio"
                   autocomplete="off"
                   checked
+                  v-model="eyes"
+                  value="neutral"
+                  @change="publishEyes({ data: eyes })"
                 />
                 <label class="btn btn-outline-secondary" for="neutral_radio"
                   >Neutral</label
@@ -49,6 +52,9 @@
                   name="btnradio"
                   id="left_radio"
                   autocomplete="off"
+                  v-model="eyes"
+                  value="left"
+                  @change="publishEyes({ data: eyes })"
                 />
                 <label class="btn btn-outline-secondary" for="left_radio"
                   >Left</label
@@ -59,6 +65,9 @@
                   name="btnradio"
                   id="right_radio"
                   autocomplete="off"
+                  v-model="eyes"
+                  value="right"
+                  @change="publishEyes({ data: eyes })"
                 />
                 <label class="btn btn-outline-secondary" for="right_radio"
                   >Right</label
@@ -69,6 +78,9 @@
                   name="btnradio"
                   id="evil_radio"
                   autocomplete="off"
+                  v-model="eyes"
+                  value="evil"
+                  @change="publishEyes({ data: eyes })"
                 />
                 <label class="btn btn-outline-secondary" for="evil_radio"
                   >Evil</label
@@ -79,6 +91,9 @@
                   name="btnradio"
                   id="broad_radio"
                   autocomplete="off"
+                  v-model="eyes"
+                  value="broad"
+                  @change="publishEyes({ data: eyes })"
                 />
                 <label class="btn btn-outline-secondary" for="broad_radio"
                   >Broad</label
@@ -89,6 +104,9 @@
                   name="btnradio"
                   id="low_battery_radio"
                   autocomplete="off"
+                  v-model="eyes"
+                  value="low_battery"
+                  @change="publishEyes({ data: eyes })"
                 />
                 <label class="btn btn-outline-secondary" for="low_battery_radio"
                   >Low battery</label
@@ -106,17 +124,26 @@
                   class="form-select"
                   style="max-width: 100px"
                   aria-label="Default select example"
+                  v-model="lcdRow"
                 >
-                  <option selected value="0">Row 1</option>
+                  <option value="0">Row 1</option>
                   <option value="1">Row 2</option>
                 </select>
                 <input
                   type="text"
                   class="form-control"
                   aria-label="Text input with dropdown button"
+                  v-model="lcdMessage"
+                  maxlength="16"
+                  minlength="1"
                 />
               </div>
-              <button class="btn pub-btn">Publish</button>
+              <button
+                class="btn pub-btn"
+                @click="publishLcd({ message: lcdMessage, row: lcdRow })"
+              >
+                Publish
+              </button>
             </div>
           </div>
           <!-- Focus lights -->
@@ -134,6 +161,13 @@
                     type="checkbox"
                     role="switch"
                     id="leftFocusLed"
+                    v-model="focusLightLeft"
+                    @change="
+                      publishFocuslights({
+                        right: focusLightRight,
+                        left: focusLightLeft,
+                      })
+                    "
                   />
                 </div>
 
@@ -146,6 +180,13 @@
                     type="checkbox"
                     role="switch"
                     id="rightFocusLed"
+                    v-model="focusLightRight"
+                    @change="
+                      publishFocuslights({
+                        right: focusLightRight,
+                        left: focusLightLeft,
+                      })
+                    "
                   />
                 </div>
               </div>
@@ -229,7 +270,6 @@
                       rgbCard
                       role="switch"
                       id="fullStripAnim"
-                      :disabled="disable"
                       v-model="fullAnim"
                     />
                   </div>
@@ -256,14 +296,79 @@
 <script>
 import jumbotronHeader from "../components/jumbotronHeading.vue";
 import rgbStrip from "../components/rgbStripComp.vue";
+import { mapGetters, mapMutations } from "vuex";
 export default {
   data() {
     return {
-      fullAnim: false,
     };
   },
   components: { jumbotronHeader, rgbStrip },
-  methods: {},
+  computed: {
+    ...mapGetters(["ros", "eyes_pub"]),
+    fullAnim: {
+      get() {
+        return this.$store.getters.fullAnim;
+      },
+      set(value) {
+        this.$store.commit("updateFullAnim", { data: value });
+      },
+    },
+    eyes: {
+      get() {
+        return this.$store.getters.eyes;
+      },
+      set(value) {
+        this.$store.commit("updateEyes", { data: value });
+      },
+    },
+    focusLightLeft: {
+      get() {
+        return this.$store.getters.focusLight.left;
+      },
+      set(value) {
+        this.$store.commit("updateFocusLight", {
+          left: value,
+          right: this.$store.getters.focusLight.right,
+        });
+      },
+    },
+    focusLightRight: {
+      get() {
+        return this.$store.getters.focusLight.right;
+      },
+      set(value) {
+        this.$store.commit("updateFocusLight", {
+          left: this.$store.getters.focusLight.left,
+          right: value,
+        });
+      },
+    },
+    lcdRow: {
+      get() {
+        return this.$store.getters.lcd.row;
+      },
+      set(value) {
+        this.$store.commit("updateLcd", {
+          row: value,
+          message: this.$store.getters.lcd.message,
+        });
+      },
+    },
+    lcdMessage: {
+      get() {
+        return this.$store.getters.lcd.message;
+      },
+      set(value) {
+        this.$store.commit("updateLcd", {
+          row: this.$store.getters.lcd.row,
+          message: value,
+        });
+      },
+    },
+  },
+  methods: {
+    ...mapMutations(["publishEyes", "publishFocuslights", "publishLcd"]),
+  },
   mounted() {},
 };
 </script>
@@ -289,6 +394,7 @@ button.nav-link:hover {
   color: #8e8f91 !important;
 }
 .pub-btn {
+  width: 100px;
   background-color: #f2771a !important;
   color: white !important;
 }

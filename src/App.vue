@@ -102,11 +102,16 @@ export default {
   },
   methods: {
     ...mapActions(["connectRobot", "disconnectRobot"]),
-    ...mapMutations(["showToast","vel_pub"]),
+    ...mapMutations([
+      "showToast",
+      "vel_pub",
+      "eyes_pub",
+      "focus_light_pub",
+      "lcd_pub",
+    ]),
   },
 
   mounted() {
-    
     window.document.title = "NinjaBot GUI";
     //ros callbacks
     let vm = this;
@@ -114,6 +119,10 @@ export default {
       console.log("Connected to websocket server.");
       //set topics
       vm.vel_pub();
+      vm.eyes_pub();
+      vm.focus_light_pub();
+      vm.lcd_pub();
+
       vm.$router.push({ name: "teleop" });
       vm.showToast({
         time: Date.now().toString(),
