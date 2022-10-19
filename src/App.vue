@@ -108,6 +108,9 @@ export default {
       "eyes_pub",
       "focus_light_pub",
       "lcd_pub",
+      "body_ws2812b_pub",
+      "left_ws2812b_pub",
+      "right_ws2812b_pub"
     ]),
   },
 
@@ -122,7 +125,9 @@ export default {
       vm.eyes_pub();
       vm.focus_light_pub();
       vm.lcd_pub();
-
+      vm.body_ws2812b_pub();
+      vm.left_ws2812b_pub();
+      vm.right_ws2812b_pub();
       vm.$router.push({ name: "teleop" });
       vm.showToast({
         time: Date.now().toString(),

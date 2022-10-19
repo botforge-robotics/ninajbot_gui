@@ -5,7 +5,6 @@ import store from "./store";
 import "bootstrap/dist/js/bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-
 createApp(App)
   .use(router)
   .use(store)

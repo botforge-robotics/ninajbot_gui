@@ -16,8 +16,14 @@ export const focus_light_pub = (state) => {
 export const lcd_pub = (state) => {
   return state.lcd_pub;
 };
-export const fullAnim = (state) => {
-  return state.fullAnim;
+export const body_ws2812b_pub = (state) => {
+  return state.body_ws2812b_pub;
+};
+export const left_ws2812b_pub = (state) => {
+  return state.left_ws2812b_pub;
+};
+export const right_ws2812b_pub = (state) => {
+  return state.right_ws2812b_pub;
 };
 export const eyes = (state) => {
   return state.eyes;
@@ -27,6 +33,15 @@ export const focusLight = (state) => {
 };
 export const lcd = (state) => {
   return state.lcd;
+};
+export const body_ws2812b = (state) => {
+  return state.body_ws2812b;
+};
+export const left_ws2812b = (state) => {
+  return state.left_ws2812b;
+};
+export const right_ws2812b = (state) => {
+  return state.right_ws2812b;
 };
 export const max_allowed_linear_vel = (state) => {
   return state.max_allowed_linear_vel;

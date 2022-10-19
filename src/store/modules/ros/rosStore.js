@@ -3,14 +3,24 @@ import * as actions from "./actions";
 import * as getters from "./getters";
 import * as mutations from "./mutations";
 
+const strip = {
+  h: 255,
+  s: 255,
+  v: 255,
+  t: 10,
+  animation: 1,
+  reverse: false,
+};
 const state = {
   roboConnectionStatus: false,
   ros: new ROSLIB.Ros(),
   vel_pub: null,
   eyes_pub: null,
-  focus_light_pub:null,
-  lcd_pub:null,
-  fullAnim: false,
+  focus_light_pub: null,
+  lcd_pub: null,
+  body_ws2812b_pub:null,
+  left_ws2812b_pub:null,
+  right_ws2812b_pub:null,
   eyes: "neutral",
   focusLight: {
     left: false,
@@ -20,6 +30,20 @@ const state = {
     message: "",
     row: 0,
   },
+  body_ws2812b: {
+    front: { ...strip },
+    rear: { ...strip },
+    left: { ...strip },
+    right: { ...strip },
+    front_left: { ...strip },
+    front_right: { ...strip },
+    rear_left: { ...strip },
+    rear_right: { ...strip },
+    global_anim: false,
+    body: { ...strip },
+  },
+  left_ws2812b:{ ...strip },
+  right_ws2812b:{ ...strip },
   max_allowed_linear_vel: 3.0,
   max_allowed_angular_vel: 3.0,
   min_allowed_linear_vel: 0.1,

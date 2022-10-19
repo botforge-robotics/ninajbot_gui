@@ -203,15 +203,29 @@
               <li class="nav-item" role="presentation">
                 <button
                   class="nav-link active"
-                  id="pills-custom-tab"
+                  id="pills-customBody-tab"
                   data-bs-toggle="pill"
-                  data-bs-target="#pills-custom"
+                  data-bs-target="#pills-customBody"
                   type="button"
                   role="tab"
-                  aria-controls="pills-custom"
+                  aria-controls="pills-customBody"
                   aria-selected="true"
                 >
-                  Custom
+                  Custom Body
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link"
+                  id="pills-customLR-tab"
+                  data-bs-toggle="pill"
+                  data-bs-target="#pills-customLR"
+                  type="button"
+                  role="tab"
+                  aria-controls="pills-customLR"
+                  aria-selected="false"
+                >
+                  Custom Left Right
                 </button>
               </li>
               <li class="nav-item" role="presentation">
@@ -233,29 +247,89 @@
           <div class="card-body tab-content">
             <div
               class="tab-pane fade show active w-100"
-              id="pills-custom"
+              id="pills-customBody"
               role="tabpanel"
-              aria-labelledby="pills-custom-tab"
+              aria-labelledby="pills-customBody-tab"
               tabindex="0"
             >
               <div class="d-flex flex-column justify-content-evenly w-100">
                 <div class="d-flex flex-row justify-content-evenly">
-                  <rgb-strip title="Front Left" :disable="fullAnim"></rgb-strip>
-                  <rgb-strip title="Front" :disable="fullAnim"></rgb-strip>
+                  <rgb-strip
+                    title="Front Left"
+                    :config="body_ws2812b.front_left"
+                    @updateStrip="
+                      updateBodyStrip({ value: $event, target: 'front_left' })
+                    "
+                    :disable="body_ws2812b.global_anim"
+                  ></rgb-strip>
+                  <rgb-strip
+                    title="Front"
+                    :config="body_ws2812b.front"
+                    @updateStrip="
+                      updateBodyStrip({ value: $event, target: 'front' })
+                    "
+                    :disable="body_ws2812b.global_anim"
+                  ></rgb-strip>
                   <rgb-strip
                     title="Front Right"
-                    :disable="fullAnim"
+                    :config="body_ws2812b.front_right"
+                    @updateStrip="
+                      updateBodyStrip({ value: $event, target: 'front_right' })
+                    "
+                    :disable="body_ws2812b.global_anim"
                   ></rgb-strip>
                 </div>
                 <div class="d-flex flex-row justify-content-evenly">
-                  <rgb-strip title="Left" :disable="fullAnim"></rgb-strip>
-                  <rgb-strip title="Body" :disable="!fullAnim"></rgb-strip>
-                  <rgb-strip title="Right" :disable="fullAnim"></rgb-strip>
+                  <rgb-strip
+                    title="Left"
+                    :config="body_ws2812b.left"
+                    @updateStrip="
+                      updateBodyStrip({ value: $event, target: 'left' })
+                    "
+                    :disable="body_ws2812b.global_anim"
+                  ></rgb-strip>
+                  <rgb-strip
+                    title="Body"
+                    :config="body_ws2812b.body"
+                    @updateStrip="
+                      updateBodyStrip({ value: $event, target: 'body' })
+                    "
+                    :disable="!body_ws2812b.global_anim"
+                  ></rgb-strip>
+                  <rgb-strip
+                    title="Right"
+                    :config="body_ws2812b.right"
+                    @updateStrip="
+                      updateBodyStrip({ value: $event, target: 'right' })
+                    "
+                    :disable="body_ws2812b.global_anim"
+                  ></rgb-strip>
                 </div>
                 <div class="d-flex flex-row justify-content-evenly">
-                  <rgb-strip title="Rear Left" :disable="fullAnim"></rgb-strip>
-                  <rgb-strip title="Rear" :disable="fullAnim"></rgb-strip>
-                  <rgb-strip title="Rear Right" :disable="fullAnim"></rgb-strip>
+                  <rgb-strip
+                    title="Rear Left"
+                    :config="body_ws2812b.rear_left"
+                    @updateStrip="
+                      updateBodyStrip({ value: $event, target: 'rear_left' })
+                    "
+                    :disable="body_ws2812b.global_anim"
+                  ></rgb-strip>
+                  <rgb-strip
+                    title="Rear"
+                    :config="body_ws2812b.rear"
+                    @updateStrip="
+                      updateBodyStrip({ value: $event, target: 'rear' })
+                    "
+                    :disable="body_ws2812b.global_anim"
+                  ></rgb-strip>
+                  <rgb-strip
+                    title="Rear Right"
+                    :config="body_ws2812b.rear_right"
+                    @updateStrip="
+                      updateBodyStrip({ value: $event, target: 'rear_right' })
+                    "
+                    :disable="body_ws2812b.global_anim"
+                  ></rgb-strip>
                 </div>
                 <div class="d-flex flex-row justify-content-evenly">
                   <div class="form-check form-switch form-check-reverse">
@@ -270,10 +344,53 @@
                       rgbCard
                       role="switch"
                       id="fullStripAnim"
-                      v-model="fullAnim"
+                      v-model="body_ws2812b.global_anim"
                     />
                   </div>
-                  <button class="btn pub-btn">Publish</button>
+                  <button
+                    class="btn pub-btn"
+                    @click="publishBodyStrip(body_ws2812b)"
+                  >
+                    Publish
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div
+              class="tab-pane fade w-100"
+              id="pills-customLR"
+              role="tabpanel"
+              aria-labelledby="pills-customBodyLR-tab"
+              tabindex="0"
+            >
+              <div class="d-flex flex-column justify-content-evenly w-100 h-100">
+                <div class="d-flex flex-row justify-content-evenly">
+                  <rgb-strip
+                    title="Left"
+                    :config="left_ws2812b"
+                    @updateStrip="updateLeftStrip($event)"
+                    :disable="false"
+                  ></rgb-strip>
+                  <rgb-strip
+                    title="Right"
+                    :config="right_ws2812b"
+                    @updateStrip="updateRightStrip($event)"
+                    :disable="false"
+                  ></rgb-strip>
+                </div>
+                <div class="d-flex flex-row justify-content-evenly">
+                  <button
+                    class="btn pub-btn"
+                    @click="publishLeftStrip(left_ws2812b)"
+                  >
+                    Publish
+                  </button>
+                  <button
+                    class="btn pub-btn"
+                    @click="publishRightStrip(right_ws2812b)"
+                  >
+                    Publish
+                  </button>
                 </div>
               </div>
             </div>
@@ -299,20 +416,17 @@ import rgbStrip from "../components/rgbStripComp.vue";
 import { mapGetters, mapMutations } from "vuex";
 export default {
   data() {
-    return {
-    };
+    return {};
   },
   components: { jumbotronHeader, rgbStrip },
   computed: {
-    ...mapGetters(["ros", "eyes_pub"]),
-    fullAnim: {
-      get() {
-        return this.$store.getters.fullAnim;
-      },
-      set(value) {
-        this.$store.commit("updateFullAnim", { data: value });
-      },
-    },
+    ...mapGetters([
+      "ros",
+      "eyes_pub",
+      "body_ws2812b",
+      "left_ws2812b",
+      "right_ws2812b",
+    ]),
     eyes: {
       get() {
         return this.$store.getters.eyes;
@@ -367,7 +481,20 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["publishEyes", "publishFocuslights", "publishLcd"]),
+    ...mapMutations([
+      "publishEyes",
+      "publishFocuslights",
+      "publishLcd",
+      "publishBodyStrip",
+      "publishLeftStrip",
+      "publishRightStrip",
+      "updateLeftStrip",
+      "updateRightStrip",
+    ]),
+    updateBodyStrip(data) {
+      this.body_ws2812b[data.target] = { ...data.value };
+      this.$store.commit("updateBodyStrip", this.body_ws2812b);
+    },
   },
   mounted() {},
 };
