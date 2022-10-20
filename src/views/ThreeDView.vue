@@ -31,6 +31,7 @@ export default {
       width: 1280,
       height: 720,
       antialias: true,
+      background: "#efefef"
     });
     // Add a grid.
     this.viewer.addObject(new ROS3D.Grid());
