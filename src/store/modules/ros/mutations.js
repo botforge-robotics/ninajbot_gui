@@ -158,6 +158,9 @@ export const updateServicesList = (state, payload) => {
 export const updateActionServersList = (state, payload) => {
   state.actionsServersList = { ...payload };
 };
+export const updateParamsList = (state, payload) => {
+  state.paramsList = { ...payload };
+};
 export const updateImageTopicName = (state, payload) => {
   state.image_topic_name = payload;
 };

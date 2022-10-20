@@ -134,6 +134,38 @@ export const updateActionServersListAction = ({ commit, state }) => {
     }
   );
 };
-export const addToLogsAction = ({ commit },payload) => {
+export const updateParamsListAction = ({ commit, state }) => {
+  let params = {};
+  params["params"] = [];
+  params["paramsCount"] = 0;
+  state.ros.getParams(
+    (data) => {
+      params["paramsCount"] = data.length;
+      data.forEach((param) => {
+        params["params"].push({
+          param: param,
+        });
+      });
+      params["params"].forEach((param) => {
+        let temp_param = state.ros.Param({
+          ros: state.ros,
+          name: param.param,
+        });
+        temp_param.get((val) => {
+          param["value"] = val;
+          commit("updateParamsList", params);
+        });
+      });
+    },
+    () => {
+      store.commit("showToast", {
+        time: Date.now().toString(),
+        message: `Error gettting params list!`,
+      });
+      commit("updateParamsList", params);
+    }
+  );
+};
+export const addToLogsAction = ({ commit }, payload) => {
   commit("addToLogs", payload);
 };

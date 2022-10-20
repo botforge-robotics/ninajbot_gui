@@ -1,6 +1,6 @@
 
 <template>
-  <nav class="navbar navbar-expand-lg bg-light">
+  <nav class="navbar navbar-expand-lg bg-light fixed-top">
     <div class="container-fluid">
       <div>
         <img
@@ -178,5 +178,8 @@ export default {
 input.form-control:focus {
   border-color: #f2771a !important;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgb(242, 119, 26);
+}
+.page-container{
+margin-top:60px;
 }
 </style>

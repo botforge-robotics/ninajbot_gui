@@ -55,6 +55,9 @@ export const servicesList = (state) => {
 export const actionsServersList = (state) => {
   return state.actionsServersList;
 };
+export const paramsList = (state) => {
+  return state.paramsList;
+};
 export const image_topic_name = (state) => {
   return state.image_topic_name;
 };

@@ -32,7 +32,7 @@
             @click="nodesListindex = index"
             :class="{ active: nodesListindex == index }"
           >
-            <p class="fs-6">{{ removeSlash(node.node) }}</p>
+            <p class="fs-6">{{ node.node }}</p>
           </button>
         </div>
         <node-details

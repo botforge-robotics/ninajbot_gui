@@ -6,7 +6,7 @@
         p-2
         bg-secondary bg-opacity-10
         rounded-bottom
-        w-80
+        w-80 
       "
     >
       <h1 class="text-left">{{title}}</h1>
