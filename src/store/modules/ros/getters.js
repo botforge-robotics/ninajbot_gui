@@ -58,6 +58,9 @@ export const actionsServersList = (state) => {
 export const paramsList = (state) => {
   return state.paramsList;
 };
+export const running_map_node = (state) => {
+  return state.running_map_node;
+};
 export const image_topic_name = (state) => {
   return state.image_topic_name;
 };

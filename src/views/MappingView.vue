@@ -10,10 +10,32 @@
     </div>
     <div class="teleopConatiner">
       <div class="d-flex flex-row justify-content-evenly align-items-center">
-        <image-view class="col-4 p-0" style="max-width:480px !important;"></image-view>
+        <image-view
+          class="col-4 p-0"
+          style="max-width: 480px !important"
+        ></image-view>
         <joy-stick class="col-4 ps-3"></joy-stick>
         <map-view class="col-4 p-0"></map-view>
       </div>
+    </div>
+    <div
+      class="d-flex flex-row justify-content-end w-100 mt-4"
+      style="height: 40px"
+    >
+      <button
+        type="button"
+        class="btn me-5"
+        :class="{
+          'btn-success': !running_map_node,
+          'btn-danger': running_map_node,
+        }"
+        @click="updateMappingNodeStatus(!running_map_node)"
+      >
+        {{ running_map_node ? "Stop Mapping" : "Start Mapping" }}
+      </button>
+      <button type="button" class="btn btn-warning text-white me-5">
+        Save Map
+      </button>
     </div>
   </div>
 </template>
@@ -23,7 +45,7 @@
 import imageView from "../components/imageView.vue";
 import joyStick from "../components/joystickComp.vue";
 import jumbotronHeader from "../components/jumbotronHeading.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import mapView from "../components/mapComp.vue";
 // import {Viewer,OccupancyGridClient} from "../helper/ros2d";
 export default {
@@ -31,7 +53,7 @@ export default {
     return {};
   },
   computed: {
-    ...mapGetters(["ros"]),
+    ...mapGetters(["ros", "running_map_node"]),
   },
   components: {
     imageView,
@@ -39,10 +61,12 @@ export default {
     jumbotronHeader,
     mapView,
   },
-  methods: {},
+  methods: {
+    ...mapMutations(["updateMappingNodeStatus"]),
+  },
   mounted() {
-    document.getElementById("camera").style.width="480px";
-    document.getElementById("camera").style.height="360px";
+    document.getElementById("camera").style.width = "480px";
+    document.getElementById("camera").style.height = "360px";
     // Create the main viewer.
     var viewer = new ROS2D.Viewer({
       divID: "map",
