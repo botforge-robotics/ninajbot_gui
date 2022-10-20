@@ -58,6 +58,9 @@ export const actionsServersList = (state) => {
 export const image_topic_name = (state) => {
   return state.image_topic_name;
 };
+export const logs = (state) => {
+  return state.logs;
+};
 export const max_allowed_linear_vel = (state) => {
   return state.max_allowed_linear_vel;
 };

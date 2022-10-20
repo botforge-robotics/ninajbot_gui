@@ -99,17 +99,17 @@ export const publishLcd = (state, payload) => {
     message: `Lcd message published! "${payload.message}" to line ${payload.row}.`,
   });
 };
-export const publishBodyStrip= (state, payload) => {
-  var msg = new ROSLIB.Message({...payload});
+export const publishBodyStrip = (state, payload) => {
+  var msg = new ROSLIB.Message({ ...payload });
   state.body_ws2812b_pub.publish(msg);
   store.commit("showToast", {
     time: Date.now().toString(),
-    message: `Body strip message published!.`
+    message: `Body strip message published!.`,
   });
 };
 
 export const publishLeftStrip = (state, payload) => {
-  var msg = new ROSLIB.Message({...payload});
+  var msg = new ROSLIB.Message({ ...payload });
   state.left_ws2812b_pub.publish(msg);
   store.commit("showToast", {
     time: Date.now().toString(),
@@ -118,7 +118,7 @@ export const publishLeftStrip = (state, payload) => {
 };
 
 export const publishRightStrip = (state, payload) => {
-  var msg = new ROSLIB.Message({...payload});
+  var msg = new ROSLIB.Message({ ...payload });
   state.right_ws2812b_pub.publish(msg);
   store.commit("showToast", {
     time: Date.now().toString(),
@@ -138,28 +138,32 @@ export const updateLcd = (state, payload) => {
   state.lcd.row = payload.row;
 };
 export const updateBodyStrip = (state, payload) => {
-  state.body_ws2812b = {...payload};
+  state.body_ws2812b = { ...payload };
 };
 export const updateLeftStrip = (state, payload) => {
-  state.left_ws2812b = {...payload};
+  state.left_ws2812b = { ...payload };
 };
 export const updateRightStrip = (state, payload) => {
-  state.right_ws2812b = {...payload};
+  state.right_ws2812b = { ...payload };
 };
 export const updateNodesList = (state, payload) => {
-  state.nodesList = {...payload};
+  state.nodesList = { ...payload };
 };
 export const updateTopicsList = (state, payload) => {
-  state.topicsList = {...payload};
+  state.topicsList = { ...payload };
 };
 export const updateServicesList = (state, payload) => {
-  state.servicesList = {...payload};
+  state.servicesList = { ...payload };
 };
 export const updateActionServersList = (state, payload) => {
-  state.actionsServersList = {...payload};
+  state.actionsServersList = { ...payload };
 };
 export const updateImageTopicName = (state, payload) => {
   state.image_topic_name = payload;
+};
+export const addToLogs = (state, payload) => {
+  state.logs.unshift({ ...payload });
+  if (state.logs.length > 100) state.logs.pop();
 };
 export const set_max_allowed_linear_vel = (state, payload) => {
   state.max_allowed_linear_vel = payload;

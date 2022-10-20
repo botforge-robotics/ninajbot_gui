@@ -134,3 +134,6 @@ export const updateActionServersListAction = ({ commit, state }) => {
     }
   );
 };
+export const addToLogsAction = ({ commit },payload) => {
+  commit("addToLogs", payload);
+};

@@ -61,6 +61,7 @@ const state = {
     serversCount:0
   },
   image_topic_name:"/",
+  logs:[],
   max_allowed_linear_vel: 3.0,
   max_allowed_angular_vel: 3.0,
   min_allowed_linear_vel: 0.1,

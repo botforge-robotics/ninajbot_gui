@@ -92,6 +92,7 @@ export default {
   data() {
     return {
       robotIp: "localhost",
+      log_listner: null,
     };
   },
   components: {
@@ -101,7 +102,7 @@ export default {
     ...mapGetters(["isRoboConnected", "ros"]),
   },
   methods: {
-    ...mapActions(["connectRobot", "disconnectRobot"]),
+    ...mapActions(["connectRobot", "disconnectRobot", "addToLogsAction"]),
     ...mapMutations([
       "showToast",
       "vel_pub",
@@ -110,7 +111,7 @@ export default {
       "lcd_pub",
       "body_ws2812b_pub",
       "left_ws2812b_pub",
-      "right_ws2812b_pub"
+      "right_ws2812b_pub",
     ]),
   },
 
@@ -147,6 +148,25 @@ export default {
         message: "Disconnected from Ninjabot",
       });
     });
+
+    // ros log
+    this.log_listner = this.ros.Topic({
+      ros: this.ros,
+      name: "/rosout",
+      messageType: "rosgraph_msgs/Log",
+    });
+    this.log_listner.subscribe(function (data) {
+      vm.addToLogsAction({
+        secs: data.header.stamp.secs,
+        level: data.level,
+        name: data.name,
+        file: data.file,
+        msg: data.msg,
+      });
+    });
+  },
+  unmounted() {
+    this.log_listner.unsubscribe();
   },
 };
 </script>
