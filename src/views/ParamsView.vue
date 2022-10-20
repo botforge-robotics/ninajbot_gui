@@ -1,6 +1,10 @@
 <template>
     <div class="params-page h-100">
       <jumbotron-Header title="Params"></jumbotron-Header>
+      <p>getParams</p>
+      <p>delete</p>
+      <p>set</p>
+      <p>get</p>
     </div>
   </template>
   

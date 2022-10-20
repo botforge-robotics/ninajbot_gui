@@ -146,6 +146,18 @@ export const updateLeftStrip = (state, payload) => {
 export const updateRightStrip = (state, payload) => {
   state.right_ws2812b = {...payload};
 };
+export const updateNodesList = (state, payload) => {
+  state.nodesList = {...payload};
+};
+export const updateTopicsList = (state, payload) => {
+  state.topicsList = {...payload};
+};
+export const updateServicesList = (state, payload) => {
+  state.servicesList = {...payload};
+};
+export const updateActionServersList = (state, payload) => {
+  state.actionsServersList = {...payload};
+};
 export const set_max_allowed_linear_vel = (state, payload) => {
   state.max_allowed_linear_vel = payload;
 };

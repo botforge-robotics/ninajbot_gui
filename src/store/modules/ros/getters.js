@@ -43,6 +43,18 @@ export const left_ws2812b = (state) => {
 export const right_ws2812b = (state) => {
   return state.right_ws2812b;
 };
+export const nodesList = (state) => {
+  return state.nodesList;
+};
+export const topicsList = (state) => {
+  return state.topicsList;
+};
+export const servicesList = (state) => {
+  return state.servicesList;
+};
+export const actionsServersList = (state) => {
+  return state.actionsServersList;
+};
 export const max_allowed_linear_vel = (state) => {
   return state.max_allowed_linear_vel;
 };

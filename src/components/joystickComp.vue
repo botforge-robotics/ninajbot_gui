@@ -1,6 +1,6 @@
 <template>
   <div id="joyStickContainer">
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <ul class="nav nav-pills mb-3 nav-fill" id="pills-tab" role="tablist">
       <li class="nav-item" role="presentation">
         <button
           class="nav-link active"
@@ -11,6 +11,7 @@
           role="tab"
           aria-controls="pills-analog"
           aria-selected="true"
+          @click="showVelSlider = true"
         >
           Analog
         </button>
@@ -25,8 +26,24 @@
           role="tab"
           aria-controls="pills-buttons"
           aria-selected="false"
+          @click="showVelSlider = true"
         >
           Buttons
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="pills-joy-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#pills-joy"
+          type="button"
+          role="tab"
+          aria-controls="pills-joy"
+          aria-selected="false"
+          @click="showVelSlider = false"
+        >
+          Joy stick
         </button>
       </li>
     </ul>
@@ -84,11 +101,34 @@
           </div>
         </div>
       </div>
+      <div
+        class="tab-pane fade"
+        id="pills-joy"
+        role="tabpanel"
+        aria-labelledby="pills-joy-tab"
+        tabindex="0"
+      >
+        <div >
+          <img style="height: 19em;" src="@/assets/images/joystick_control.jpg" alt="joystick_control.png" >
+        </div>
+      </div>
     </div>
-    <div class="d-flex flex-row justify-content-evenly">
+    <div class="d-flex flex-row justify-content-evenly" v-if="showVelSlider">
       <div class="w-50 ms-5 me-5">
-        <label for="max_linear_vel" class="form-label fs-6 fw-semibold fst-italic d-flex align-items-center"
-          >Max Linear Velocity: <p class="ms-2 fs-5 fw-bold mb-0">{{max_linear_vel}}<span class="text-muted"> m/s.</span></p></label
+        <label
+          for="max_linear_vel"
+          class="
+            form-label
+            fs-6
+            fw-semibold
+            fst-italic
+            d-flex
+            align-items-center
+          "
+          >Max Linear Velocity:
+          <p class="ms-2 fs-5 fw-bold mb-0">
+            {{ max_linear_vel }}<span class="text-muted"> m/s.</span>
+          </p></label
         >
         <input
           type="range"
@@ -103,8 +143,20 @@
       </div>
 
       <div class="w-50 ms-5 me-5">
-        <label for="max_angular_vel" class="form-label fs-6 fw-semibold fst-italic d-flex align-items-center"
-          >Max Angular Velocity: <p class="ms-2 fs-5 fw-bold mb-0" >{{max_angular_vel}} <span class="text-muted"> rad/s.</span></p></label
+        <label
+          for="max_angular_vel"
+          class="
+            form-label
+            fs-6
+            fw-semibold
+            fst-italic
+            d-flex
+            align-items-center
+          "
+          >Max Angular Velocity:
+          <p class="ms-2 fs-5 fw-bold mb-0">
+            {{ max_angular_vel }} <span class="text-muted"> rad/s.</span>
+          </p></label
         >
         <input
           type="range"
@@ -131,6 +183,7 @@ export default {
       linear_speed: 0.0,
       angular_speed: 0.0,
       timer: null,
+      showVelSlider:true
     };
   },
   computed: {
@@ -144,7 +197,11 @@ export default {
     ]),
   },
   methods: {
-    ...mapMutations(["publishVel", "set_max_linear_vel", "set_max_angular_vel"]),
+    ...mapMutations([
+      "publishVel",
+      "set_max_linear_vel",
+      "set_max_angular_vel",
+    ]),
   },
   mounted() {
     let vm = this;
@@ -232,13 +289,13 @@ button.nav-link:hover {
 }
 
 .form-range:focus::-webkit-slider-thumb {
-    background-color: #f2771a;
-    box-shadow: 0px 0px 3px 3px rgba(242,119,26,0.72) !important;
+  background-color: #f2771a;
+  box-shadow: 0px 0px 3px 3px rgba(242, 119, 26, 0.72) !important;
 }
 .form-range::-webkit-slider-thumb {
   background-color: #f2771a !important;
 }
-label p{
-  color:#f2771a;
+label p {
+  color: #f2771a;
 }
 </style>

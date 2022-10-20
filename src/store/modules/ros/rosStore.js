@@ -44,6 +44,22 @@ const state = {
   },
   left_ws2812b:{ ...strip },
   right_ws2812b:{ ...strip },
+  nodesList:{
+    nodes:[],
+    nodesCount:0,
+  },
+  topicsList:{
+    topics:[],
+    topicsCount:0
+  },
+  servicesList:{
+    services:[],
+    servicesCount:0
+  },
+  actionsServersList:{
+    servers:[],
+    serversCount:0
+  },
   max_allowed_linear_vel: 3.0,
   max_allowed_angular_vel: 3.0,
   min_allowed_linear_vel: 0.1,

@@ -199,7 +199,7 @@
         <div class="card text-center" id="rgbCard">
           <div class="card-header">
             <div>RGB Led Strip</div>
-            <ul class="nav nav-tabs card-header-tabs">
+            <ul class="nav nav-tabs nav-fill card-header-tabs">
               <li class="nav-item" role="presentation">
                 <button
                   class="nav-link active"
