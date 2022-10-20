@@ -55,6 +55,9 @@ export const servicesList = (state) => {
 export const actionsServersList = (state) => {
   return state.actionsServersList;
 };
+export const image_topic_name = (state) => {
+  return state.image_topic_name;
+};
 export const max_allowed_linear_vel = (state) => {
   return state.max_allowed_linear_vel;
 };
@@ -62,11 +65,11 @@ export const max_allowed_angular_vel = (state) => {
   return state.max_allowed_angular_vel;
 };
 export const min_allowed_linear_vel = (state) => {
-    return state.min_allowed_linear_vel;
-  };
-  export const min_allowed_angular_vel = (state) => {
-    return state.min_allowed_angular_vel;
-  };
+  return state.min_allowed_linear_vel;
+};
+export const min_allowed_angular_vel = (state) => {
+  return state.min_allowed_angular_vel;
+};
 export const max_linear_vel = (state) => {
   return state.max_linear_vel;
 };

@@ -10,7 +10,7 @@
     </div>
     <div class="teleopConatiner">
       <div class="d-flex flex-row justify-content-evenly align-items-center">
-        <image-view class="col-4 p-0"></image-view>
+        <image-view class="col-4 p-0" style="max-width:480px !important;"></image-view>
         <joy-stick class="col-4 ps-3"></joy-stick>
         <map-view class="col-4 p-0"></map-view>
       </div>
@@ -41,6 +41,8 @@ export default {
   },
   methods: {},
   mounted() {
+    document.getElementById("camera").style.width="480px";
+    document.getElementById("camera").style.height="360px";
     // Create the main viewer.
     var viewer = new ROS2D.Viewer({
       divID: "map",
@@ -247,8 +249,9 @@ export default {
 #zone_joystick {
   min-height: 330px;
 }
-#camera {
-  max-width: 480px;
-  max-height: 360px;
+img #camera {
+  max-width: 480px !important;
+  max-height: 360px !important;
+  background-color: black;
 }
 </style>

@@ -158,6 +158,9 @@ export const updateServicesList = (state, payload) => {
 export const updateActionServersList = (state, payload) => {
   state.actionsServersList = {...payload};
 };
+export const updateImageTopicName = (state, payload) => {
+  state.image_topic_name = payload;
+};
 export const set_max_allowed_linear_vel = (state, payload) => {
   state.max_allowed_linear_vel = payload;
 };

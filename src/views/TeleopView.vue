@@ -2,7 +2,7 @@
   <div class="home-page h-100">
     <jumbotron-Header title="Teleop"></jumbotron-Header>
     <div class="d-flex mt-4 flex-row w-100 text-center justify-content-evenly">
-      <p class="col col-6 fs-3 fw-semibold  fst-italic" style="width:640px;">Camera Feed</p>
+      <p class="col col-6 fs-3 fw-semibold  fst-italic" >Camera Feed</p>
       <p class="col col-6 fs-3 fw-semibold  fst-italic">Control</p>
     </div>
     <div class="teleopConatiner">
