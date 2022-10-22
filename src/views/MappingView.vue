@@ -30,14 +30,30 @@
           'btn-danger': running_map_node,
         }"
         @click="mapStartStop"
+        :disabled="map_btn_busy"
       >
-        {{ running_map_node ? "Stop Mapping" : "Start Mapping" }}
+        <span
+          class="spinner-grow spinner-grow-sm"
+          role="status"
+          aria-hidden="true"
+          v-if="map_btn_busy"
+        ></span>
+        {{
+          map_btn_busy
+            ? running_map_node
+              ? "Stopping"
+              : "Starting"
+            : running_map_node
+            ? "Stop Mapping"
+            : "Start Mapping"
+        }}
       </button>
       <button
         type="button"
         data-bs-toggle="modal"
         data-bs-target="#savemap"
         class="btn text-white me-5 orange-Btn"
+        :disabled="!running_map_node"
       >
         Save Map
       </button>
@@ -67,24 +83,46 @@
                 <label for="mapName" class="col-form-label">Map Name</label>
               </div>
               <div class="col-auto">
-                <input id="mapName" class="form-control" />
+                <input
+                  id="map_name"
+                  class="form-control"
+                  v-model="map_name"
+                  @input="v$.map_name.$touch()"
+                />
               </div>
               <div class="col-auto">
                 <span id="mapNameHelpInline" class="form-text">
-                  Must be only alphabets.
+                  Must be only alphabets, Min Length 4, Max Length 10.
                 </span>
               </div>
             </div>
+            <p v-if="v$.map_name.$error" class="text-danger fs-6">
+              Invalid name!
+            </p>
           </div>
           <div class="modal-footer">
             <button
+              id="modal_close_btn"
               type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal"
             >
               Close
             </button>
-            <button type="button" class="btn orange-Btn">Save</button>
+            <button
+              type="button"
+              class="btn orange-Btn"
+              :disabled="map_save_btn_busy || v$.map_name.$error"
+              @click="saveMap"
+            >
+              <span
+                class="spinner-grow spinner-grow-sm"
+                role="status"
+                aria-hidden="true"
+                v-if="map_save_btn_busy"
+              ></span>
+              {{ map_save_btn_busy ? "Saving" : "save" }}
+            </button>
           </div>
         </div>
       </div>
@@ -99,10 +137,18 @@ import joyStick from "../components/joystickComp.vue";
 import jumbotronHeader from "../components/jumbotronHeading.vue";
 import { mapGetters, mapMutations } from "vuex";
 import mapView from "../components/mapComp.vue";
-// import {Viewer,OccupancyGridClient} from "../helper/ros2d";
+import { useVuelidate } from "@vuelidate/core";
+import { required, alpha, minLength, maxLength } from "@vuelidate/validators";
 export default {
+  setup: () => ({ v$: useVuelidate() }),
   data() {
-    return {};
+    return {
+      map_btn_busy: false,
+      startServiceClient: null,
+      stopServiceClient: null,
+      map_save_btn_busy: null,
+      map_name: "test",
+    };
   },
   computed: {
     ...mapGetters([
@@ -113,6 +159,16 @@ export default {
       "api_srv_type",
     ]),
   },
+  validations() {
+    return {
+      map_name: {
+        required,
+        alpha,
+        minLengthValue: minLength(4),
+        maxLengthValue: maxLength(10),
+      },
+    };
+  },
   components: {
     imageView,
     joyStick,
@@ -120,41 +176,88 @@ export default {
     mapView,
   },
   methods: {
-    ...mapMutations(["updateMappingNodeStatus"]),
-    callService(service, type, args) {
-      var serviceClient = new ROSLIB.Service({
-        ros: this.ros,
-        name: service,
-        serviceType: type,
-      });
-
+    ...mapMutations(["updateMappingNodeStatus", "showToast"]),
+    saveMap() {
+      this.map_save_btn_busy = true;
       var request = new ROSLIB.ServiceRequest({
-        ...args,
+        file: "map_saver",
+        args: "map_name:=" + this.map_name.toLocaleLowerCase(),
       });
-
-      serviceClient.callService(request, function (result) {
-        console.log(result.success);
+      let vm = this;
+      this.startServiceClient.callService(request, function (result) {
+        vm.map_save_btn_busy = false;
+        let msg = "";
+        if (result.success) {
+          msg = `Saved ${vm.map_name} map!`;
+          const modal_cl_btn = document.getElementById("modal_close_btn");
+          modal_cl_btn.click();
+        } else {
+          msg = `Failed to save ${vm.map_name} map!`;
+        }
+        vm.showToast({
+          time: Date.now().toString(),
+          message: msg,
+        });
       });
     },
     mapStartStop() {
+      this.map_btn_busy = true;
       if (!this.running_map_node) {
-        this.callService(this.api_start_service_name, this.api_srv_type, {
+        var request = new ROSLIB.ServiceRequest({
           file: "map",
           args: "scan_topic:=ninjabot/scan",
+        });
+        let vm = this;
+        this.startServiceClient.callService(request, function (result) {
+          vm.map_btn_busy = false;
+          let msg = "";
+          if (result.success) {
+            msg = "Started mapping!";
+            vm.updateMappingNodeStatus(true);
+          } else {
+            msg = "failed Start mapping!!";
+          }
+          vm.showToast({
+            time: Date.now().toString(),
+            message: msg,
+          });
         });
       } else {
-        this.callService(this.api_stop_service_name, this.api_srv_type, {
+        var request = new ROSLIB.ServiceRequest({
           file: "map",
           args: "scan_topic:=ninjabot/scan",
         });
+        let vm = this;
+        this.stopServiceClient.callService(request, function (result) {
+          vm.map_btn_busy = false;
+          let msg = "";
+          if (result.success) {
+            msg = "Stopped mapping!";
+            vm.updateMappingNodeStatus(false);
+          } else {
+            msg = "failed Stop mapping!!";
+          }
+          vm.showToast({
+            time: Date.now().toString(),
+            message: msg,
+          });
+        });
       }
-
-      this.updateMappingNodeStatus(!this.running_map_node);
     },
   },
   mounted() {
     document.getElementById("camera").style.width = "480px";
     document.getElementById("camera").style.height = "360px";
+    this.startServiceClient = new ROSLIB.Service({
+      ros: this.ros,
+      name: this.api_start_service_name,
+      serviceType: this.api_srv_type,
+    });
+    this.stopServiceClient = new ROSLIB.Service({
+      ros: this.ros,
+      name: this.api_stop_service_name,
+      serviceType: this.api_srv_type,
+    });
     // Create the main viewer.
     var viewer = new ROS2D.Viewer({
       divID: "map",

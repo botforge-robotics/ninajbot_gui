@@ -3,10 +3,10 @@ trap "exit" INT TERM ERR
 trap "kill 0" EXIT
 
 #starting ros core service
-echo starting roscore
-roscore &
-echo wait untill roscore starts
-sleep 2.5s
+# echo starting roscore
+# roscore &
+# echo wait untill roscore starts
+# sleep 2.5s
 
 # starting gui api node
 echo starting launcher api ros

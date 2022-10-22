@@ -11,7 +11,16 @@ add tf2-web-republisher package
 to catkin_ws
 
 ### Run
-close all roscore and nodes
+should run roscore service manually, for physical robot not neccesarry it has already roscore running
+Terminal1:
+``` bash
+#set network config
+source ./set_env.sh
+enter robot IP:xxx.xxx.xxx.xxx #localhost for current machine/simulation
+
+roscore
+```
+Terminal2:
 ``` bash
 #set network config
 source ./set_env.sh
