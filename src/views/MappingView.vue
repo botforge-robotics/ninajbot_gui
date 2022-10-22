@@ -33,9 +33,66 @@
       >
         {{ running_map_node ? "Stop Mapping" : "Start Mapping" }}
       </button>
-      <button type="button" class="btn btn-warning text-white me-5">
+      <button
+        type="button"
+        data-bs-toggle="modal"
+        data-bs-target="#savemap"
+        class="btn text-white me-5 orange-Btn"
+      >
         Save Map
       </button>
+    </div>
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="savemap"
+      tabindex="-1"
+      aria-labelledby="savemapLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="savemapLabel">Save map?</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-auto">
+                <label for="mapName" class="col-form-label"
+                  >Map Name</label
+                >
+              </div>
+              <div class="col-auto">
+                <input
+                  id="mapName"
+                  class="form-control"
+                />
+              </div>
+              <div class="col-auto">
+                <span id="mapNameHelpInline" class="form-text">
+                  Must be only alphabets.
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn orange-Btn">Save</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -277,5 +334,14 @@ img #camera {
   max-width: 480px !important;
   max-height: 360px !important;
   background-color: black;
+}
+.orange-Btn {
+  width: 100px;
+  background-color: #f2771a !important;
+  color: white !important;
+}
+.orange-Btn:hover {
+  background-color: #bd5404 !important;
+  color: rgb(216, 216, 216) !important;
 }
 </style>
