@@ -85,3 +85,12 @@ export const max_linear_vel = (state) => {
 export const max_angular_vel = (state) => {
   return state.max_angular_vel;
 };
+export const api_start_service_name = (state) => {
+  return state.api_start_service_name;
+};
+export const api_stop_service_name = (state) => {
+  return state.api_stop_service_name;
+};
+export const api_srv_type = (state) => {
+  return state.api_srv_type;
+};

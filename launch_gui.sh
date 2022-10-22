@@ -26,6 +26,12 @@ roslaunch rosbridge_server  rosbridge_websocket.launch &
 echo wait untill rosbridge node starts
 sleep 3s
 
+# starting joystick teleop control node
+echo starting joystick teleop node
+roslaunch ninjabot_teleop joy_control.launch  &
+echo wait untill joystick teleop node starts
+sleep 3s
+
 # starting GUI
 echo starting GUI
 npm run electron:serve &

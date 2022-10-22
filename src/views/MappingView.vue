@@ -29,7 +29,7 @@
           'btn-success': !running_map_node,
           'btn-danger': running_map_node,
         }"
-        @click="updateMappingNodeStatus(!running_map_node)"
+        @click="mapStartStop"
       >
         {{ running_map_node ? "Stop Mapping" : "Start Mapping" }}
       </button>
@@ -64,15 +64,10 @@
           <div class="modal-body">
             <div class="row g-3 align-items-center">
               <div class="col-auto">
-                <label for="mapName" class="col-form-label"
-                  >Map Name</label
-                >
+                <label for="mapName" class="col-form-label">Map Name</label>
               </div>
               <div class="col-auto">
-                <input
-                  id="mapName"
-                  class="form-control"
-                />
+                <input id="mapName" class="form-control" />
               </div>
               <div class="col-auto">
                 <span id="mapNameHelpInline" class="form-text">
@@ -110,7 +105,13 @@ export default {
     return {};
   },
   computed: {
-    ...mapGetters(["ros", "running_map_node"]),
+    ...mapGetters([
+      "ros",
+      "running_map_node",
+      "api_start_service_name",
+      "api_stop_service_name",
+      "api_srv_type",
+    ]),
   },
   components: {
     imageView,
@@ -120,6 +121,36 @@ export default {
   },
   methods: {
     ...mapMutations(["updateMappingNodeStatus"]),
+    callService(service, type, args) {
+      var serviceClient = new ROSLIB.Service({
+        ros: this.ros,
+        name: service,
+        serviceType: type,
+      });
+
+      var request = new ROSLIB.ServiceRequest({
+        ...args,
+      });
+
+      serviceClient.callService(request, function (result) {
+        console.log(result.success);
+      });
+    },
+    mapStartStop() {
+      if (!this.running_map_node) {
+        this.callService(this.api_start_service_name, this.api_srv_type, {
+          file: "map",
+          args: "scan_topic:=ninjabot/scan",
+        });
+      } else {
+        this.callService(this.api_stop_service_name, this.api_srv_type, {
+          file: "map",
+          args: "scan_topic:=ninjabot/scan",
+        });
+      }
+
+      this.updateMappingNodeStatus(!this.running_map_node);
+    },
   },
   mounted() {
     document.getElementById("camera").style.width = "480px";

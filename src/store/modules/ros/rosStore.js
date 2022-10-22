@@ -73,6 +73,9 @@ const state = {
   min_allowed_angular_vel: 0.05,
   max_linear_vel: 0.5,
   max_angular_vel: 0.2,
+  api_start_service_name: "/ninjabot_launcher_api_start",
+  api_stop_service_name: "/ninjabot_launcher_api_stop",
+  api_srv_type:"ninjabot_launcher_api/NinjabotApi"
 };
 
 export default {
