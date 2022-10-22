@@ -1,21 +1,22 @@
 # Ninjabot GUI
 
-## Project setup
-```
+## setup
+```bash
+#clone repo change dir to project dir
 npm install
 ```
+add ninjabot stack
+add ros-bridge-suit package of branch ros distro
+add tf2-web-republisher package
+to catkin_ws
 
-### Compiles and hot-reloads for development
-```
-npm run electron:serve
-```
+### Run
+close all roscore and nodes
+``` bash
+#set network config
+source ./set_env.sh
+enter robot IP:xxx.xxx.xxx.xxx #localhost for current machine/simulation
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
+#launch GUI
+./launch_gui.sh
 ```
