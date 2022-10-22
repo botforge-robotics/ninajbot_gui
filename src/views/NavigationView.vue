@@ -18,25 +18,7 @@
         <map-view class="col-4 p-0"></map-view>
       </div>
     </div>
-    <div
-      class="d-flex flex-row justify-content-end w-100 mt-4"
-      style="height: 40px"
-    >
-      <button
-        type="button"
-        class="btn me-5"
-        :class="{
-          'btn-success': !running_map_node,
-          'btn-danger': running_map_node,
-        }"
-        @click="updateMappingNodeStatus(!running_map_node)"
-      >
-        {{ running_map_node ? "Stop Mapping" : "Start Mapping" }}
-      </button>
-      <button type="button" class="btn text-white me-5 orange-Btn">
-        Save Map
-      </button>
-    </div>
+    
   </div>
 </template>
 

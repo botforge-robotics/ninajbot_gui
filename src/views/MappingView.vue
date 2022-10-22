@@ -148,6 +148,9 @@ export default {
       stopServiceClient: null,
       map_save_btn_busy: null,
       map_name: "test",
+      laser_listener: null,
+      tf_client: null,
+      poseListner: null,
     };
   },
   computed: {
@@ -246,8 +249,13 @@ export default {
     },
   },
   mounted() {
+    let vm = this;
+
+    // resixze image view
     document.getElementById("camera").style.width = "480px";
     document.getElementById("camera").style.height = "360px";
+
+    // register service clients
     this.startServiceClient = new ROSLIB.Service({
       ros: this.ros,
       name: this.api_start_service_name,
@@ -258,6 +266,7 @@ export default {
       name: this.api_stop_service_name,
       serviceType: this.api_srv_type,
     });
+
     // Create the main viewer.
     var viewer = new ROS2D.Viewer({
       divID: "map",
@@ -279,14 +288,6 @@ export default {
       rootObject: viewer.scene,
       continuous: true,
     });
-    var robotMarker = new ROS2D.NavigationImage({
-      size: 0.8,
-      pulse: true,
-      image: require("../assets/navTriangle.png"),
-    });
-    robotMarker.x = 0;
-    robotMarker.y = 0;
-    robotMarker.z = 45;
 
     // Scale the canvas to fit to the map
     gridClient.on("change", function () {
@@ -302,8 +303,6 @@ export default {
       displayLaserScan();
     });
 
-    gridClient.rootObject.addChild(robotMarker);
-
     function registerMouseHandlers() {
       // Setup mouse event handlers
       var mouseDown = false;
@@ -317,9 +316,6 @@ export default {
         } else if (event.nativeEvent.shiftKey === true) {
           panKey = true;
           panView.startPan(event.stageX, event.stageY);
-        } else {
-          // var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
-          // navGoal.startGoalSelection(pos);
         }
         startPos.x = event.stageX;
         startPos.y = event.stageY;
@@ -336,9 +332,6 @@ export default {
             zoomView.zoom(zoom);
           } else if (panKey === true) {
             panView.pan(event.stageX, event.stageY);
-          } else {
-            // var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
-            // navGoal.orientGoalSelection(pos);
           }
         }
       });
@@ -349,31 +342,27 @@ export default {
             zoomKey = false;
           } else if (panKey === true) {
             panKey = false;
-          } else {
-            // var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
-            // var goalPose = navGoal.endGoalSelection(pos);
-            // navGoal.sendGoal(goalPose);
           }
           mouseDown = false;
         }
       });
     }
-
-    let vm = this;
     function getYawFromQuat(q) {
       var quat = new THREE.Quaternion(q.x, q.y, q.z, q.w);
       var yaw = new THREE.Euler().setFromQuaternion(quat);
       return yaw["_z"] * (180 / Math.PI);
     }
+
+    // Laser scanner
     function displayLaserScan() {
       var base_footprint_tf = null;
-      var tf_client = vm.ros.TFClient({
+      vm.tf_client = vm.ros.TFClient({
         ros: vm.ros,
         fixedFrame: "map",
         angularThres: 0.01,
         transThres: 0.01,
       });
-      tf_client.subscribe("/base_link", function (tf) {
+      vm.tf_client.subscribe("/base_link", function (tf) {
         base_footprint_tf = tf;
       });
 
@@ -381,12 +370,12 @@ export default {
       let marker_fill_color = createjs.Graphics.getRGB(255, 0, 0, 1.0);
       let prev_markers = null;
 
-      let laser_listener = vm.ros.Topic({
+      vm.laser_listener = vm.ros.Topic({
         ros: vm.ros,
         name: "ninjabot/scan",
         messageType: "sensor_msgs/LaserScan",
       });
-      laser_listener.subscribe(function (msg) {
+      vm.laser_listener.subscribe(function (msg) {
         const num = msg.ranges.length;
         const angles = Array.from(
           { length: num },
@@ -444,6 +433,29 @@ export default {
         prev_markers = scan_markers;
       });
     }
+
+    //  Robot pose marker
+    var robotMarker =new ROS2D.NavigationImage({
+      size: 0.8,
+      pulse: false,
+      image: require("../assets/navTriangle.png"),
+    });
+    gridClient.rootObject.addChild(robotMarker);
+    this.poseListner = vm.ros.Topic({
+      ros: vm.ros,
+      name: "odom",
+      messageType: "nav_msgs/Odometry",
+    });
+    this.poseListner.subscribe(function (msg) {
+      robotMarker.x = msg.pose.pose.position.x;
+      robotMarker.y = -msg.pose.pose.position.y;
+      robotMarker.rotation = -getYawFromQuat(msg.pose.pose.orientation).toFixed(2)
+    });
+  },
+  unmounted() {
+    this.laser_listener.unsubscribe();
+    this.tf_client.unsubscribe();
+    this.poseListner.unsubscribe();
   },
 };
 </script>
