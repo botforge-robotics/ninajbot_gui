@@ -516,6 +516,7 @@ export default {
       rootObject: viewer.scene,
       actionTopic: "/move_base",
       actionMsgType: "move_base_msgs/MoveBaseAction",
+      mapFrame:"map"
     });
     // Setup the map client.
     this.gridClient = new ROS2D.OccupancyGridClient({
@@ -688,13 +689,13 @@ export default {
     vm.gridClient.rootObject.addChild(robotMarker);
     this.poseListner = new ROSLIB.Topic({
       ros: vm.ros,
-      name: "odom",
-      messageType: "nav_msgs/Odometry",
+      name: "robot_pose",
+      messageType: "geometry_msgs/Pose",
     });
     this.poseListner.subscribe(function (msg) {
-      robotMarker.x = msg.pose.pose.position.x;
-      robotMarker.y = -msg.pose.pose.position.y;
-      robotMarker.rotation = -getYawFromQuat(msg.pose.pose.orientation).toFixed(
+      robotMarker.x = msg.position.x;
+      robotMarker.y = -msg.position.y;
+      robotMarker.rotation = -getYawFromQuat(msg.orientation).toFixed(
         2
       );
     });
