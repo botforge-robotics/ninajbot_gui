@@ -23,13 +23,8 @@
             >
           </li>
           <li class="nav-item">
-            <router-link to="/mapping" active-class="active" class="nav-link"
-              >Mapping</router-link
-            >
-          </li>
-          <li class="nav-item">
-            <router-link to="/navigation" active-class="active" class="nav-link"
-              >Navigation</router-link
+            <router-link to="/mappingnNav" active-class="active" class="nav-link"
+              >Mapping & Navigation</router-link
             >
           </li>
           <li class="nav-item">

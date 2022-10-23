@@ -164,6 +164,9 @@ export const updateParamsList = (state, payload) => {
 export const updateMappingNodeStatus = (state, payload) => {
   state.running_map_node = payload ;
 };
+export const updateNavNodeStatus = (state, payload) => {
+  state.running_nav_node = payload ;
+};
 export const updateImageTopicName = (state, payload) => {
   state.image_topic_name = payload;
 };

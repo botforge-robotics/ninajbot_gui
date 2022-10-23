@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TeleopView from '../views/TeleopView.vue'
 import DisconnectedView from '../views/DisconnectedView.vue'
-import MappingView from '../views/MappingView.vue'
-import NavigationView from '../views/NavigationView.vue'
+import MappingnNavView from '../views/MappingnNavView.vue'
 import AuxilaryView from '../views/AuxilaryView.vue'
 import NtsView from '../views/NtsView.vue'
 import ParamsView from '../views/ParamsView.vue'
@@ -65,22 +64,14 @@ const routes = [
     }
   },
   {
-    path: '/mapping',
-    name: 'mapping',
-    component: MappingView,
+    path: '/mappingnNav',
+    name: 'mappingnNav',
+    component: MappingnNavView,
     beforeEnter:(to,from,next)=>{
       if(store.getters.isRoboConnected) next()
       else next({path:'/'})
-    }
-  },
-  {
-    path: '/navigation',
-    name: 'navigation',
-    component: NavigationView,
-    beforeEnter:(to,from,next)=>{
-      if(store.getters.isRoboConnected) next()
-      else next({path:'/'})
-    }
+    },
+   
   },
   {
     path: '/',

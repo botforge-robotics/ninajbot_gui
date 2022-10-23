@@ -65,6 +65,7 @@ const state = {
     paramsCount: 0,
   },
   running_map_node:false,
+  running_nav_node: false,
   image_topic_name: "/",
   logs: [],
   max_allowed_linear_vel: 3.0,

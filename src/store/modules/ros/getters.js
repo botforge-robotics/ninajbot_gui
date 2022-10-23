@@ -61,6 +61,9 @@ export const paramsList = (state) => {
 export const running_map_node = (state) => {
   return state.running_map_node;
 };
+export const running_nav_node = (state) => {
+  return state.running_nav_node;
+};
 export const image_topic_name = (state) => {
   return state.image_topic_name;
 };

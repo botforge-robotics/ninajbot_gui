@@ -1,6 +1,8 @@
 <template>
   <div class="mapping-page h-100">
-    <jumbotron-Header title="Mapping"></jumbotron-Header>
+    <jumbotron-Header
+      :title="running_nav_node ? 'Navigation' : 'Mapping'"
+    ></jumbotron-Header>
     <div class="d-flex mt-4 flex-row w-100 text-center align-items-center">
       <p class="col-4 fs-3 fw-semibold fst-italic" style="width: 520px">
         Camera Feed
@@ -18,6 +20,8 @@
         <map-view class="col-4 p-0"></map-view>
       </div>
     </div>
+
+    <!-- buttons nav,map, save -->
     <div
       class="d-flex flex-row justify-content-end w-100 mt-4"
       style="height: 40px"
@@ -31,6 +35,7 @@
         }"
         @click="mapStartStop"
         :disabled="map_btn_busy"
+        v-if="!running_nav_node"
       >
         <span
           class="spinner-grow spinner-grow-sm"
@@ -48,17 +53,33 @@
             : "Start Mapping"
         }}
       </button>
+
+      <button
+        type="button"
+        class="btn btn-primary me-5"
+        data-bs-toggle="modal"
+        data-bs-target="#navStartModal"
+        :class="{
+          'btn-success': !running_nav_node,
+          'btn-danger': running_nav_node,
+        }"
+        v-if="!running_map_node"
+      >
+        {{ running_nav_node ? "Stop Navigation" : "Start Navigation" }}
+      </button>
+
       <button
         type="button"
         data-bs-toggle="modal"
         data-bs-target="#savemap"
         class="btn text-white me-5 orange-Btn"
         :disabled="!running_map_node"
+        v-if="!running_nav_node"
       >
         Save Map
       </button>
     </div>
-    <!-- Modal -->
+    <!-- Map Modal -->
     <div
       class="modal fade"
       id="savemap"
@@ -78,9 +99,11 @@
             ></button>
           </div>
           <div class="modal-body">
-            <div class="row g-3 align-items-center">
+            <div class="row align-items-center">
               <div class="col-auto">
-                <label for="mapName" class="col-form-label">Map Name</label>
+                <label for="mapName" class="col-form-label me-2"
+                  >Map Name:</label
+                >
               </div>
               <div class="col-auto">
                 <input
@@ -96,13 +119,14 @@
                 </span>
               </div>
             </div>
+
             <p v-if="v$.map_name.$error" class="text-danger fs-6">
               Invalid name!
             </p>
           </div>
           <div class="modal-footer">
             <button
-              id="modal_close_btn"
+              id="map_modal_close_btn"
               type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal"
@@ -122,6 +146,126 @@
                 v-if="map_save_btn_busy"
               ></span>
               {{ map_save_btn_busy ? "Saving" : "save" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Nav Modal -->
+    <div
+      class="modal fade"
+      id="navStartModal"
+      tabindex="-1"
+      aria-labelledby="navStartModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="navStartModalLabel">
+              {{ running_nav_node ? "Stop navigation?" : "Launch navigation?" }}
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" v-if="!running_nav_node">
+            <div class="d-flex flex-row align-items-center">
+              <div class="col-auto mb-2">
+                <label for="navMapName" class="col-form-label me-3"
+                  >Map Name:
+                </label>
+              </div>
+              <div class="col-auto">
+                <input
+                  id="navMapName"
+                  class="form-control"
+                  v-model="navMapName"
+                  @input="v$.navMapName.$touch()"
+                />
+              </div>
+            </div>
+            <p v-if="v$.navMapName.$error" class="text-danger fs-6">
+              Invalid name!
+            </p>
+            <div class="d-flex flex-row align-items-center">
+              <div class="col-auto">
+                <label class="col-form-label me-2">Local Planner: </label>
+              </div>
+              <select
+                class="form-select w-75"
+                aria-label="localPlannerType"
+                v-model="localPlannerName"
+              >
+                <option selected value="teb">Timed Elastic Band</option>
+                <option value="dwa">Dynamic Window Approach</option>
+              </select>
+            </div>
+            <div>
+              <div class="form-check">
+                <label class="form-check-label" for="navSimRadio">
+                  Simulation
+                </label>
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  value="simulation"
+                  id="navSimRadio"
+                  v-model="navRobotType"
+                />
+              </div>
+              <div class="form-check">
+                <label class="form-check-label" for="navRealRadio">
+                  Physical Robot
+                </label>
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  value="real"
+                  id="navRealRadio"
+                  v-model="navRobotType"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="modal-body" v-if="running_nav_node">...</div>
+          <div class="modal-footer">
+            <button
+              id="nav_modal_close_btn"
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              class="btn me-5 btn-success"
+              @click="navStartStop"
+              :disabled="v$.navMapName.$error"
+              :class="{
+                'btn-success': !running_nav_node,
+                'btn-danger': running_nav_node,
+              }"
+            >
+              <span
+                class="spinner-grow spinner-grow-sm"
+                role="status"
+                aria-hidden="true"
+                v-if="nav_btn_busy"
+              ></span>
+              {{
+                nav_btn_busy
+                  ? running_nav_node
+                    ? "Stopping"
+                    : "Starting"
+                  : running_nav_node
+                  ? "Stop Navigation"
+                  : "Start Navigation"
+              }}
             </button>
           </div>
         </div>
@@ -151,12 +295,19 @@ export default {
       laser_listener: null,
       tf_client: null,
       poseListner: null,
+      gridClient: null,
+      nav_btn_busy: false,
+      navMapName: "test",
+      navGoal: null,
+      localPlannerName: "dwa",
+      navRobotType: "simulation",
     };
   },
   computed: {
     ...mapGetters([
       "ros",
       "running_map_node",
+      "running_nav_node",
       "api_start_service_name",
       "api_stop_service_name",
       "api_srv_type",
@@ -165,6 +316,12 @@ export default {
   validations() {
     return {
       map_name: {
+        required,
+        alpha,
+        minLengthValue: minLength(4),
+        maxLengthValue: maxLength(10),
+      },
+      navMapName: {
         required,
         alpha,
         minLengthValue: minLength(4),
@@ -179,7 +336,11 @@ export default {
     mapView,
   },
   methods: {
-    ...mapMutations(["updateMappingNodeStatus", "showToast"]),
+    ...mapMutations([
+      "updateMappingNodeStatus",
+      "showToast",
+      "updateNavNodeStatus",
+    ]),
     saveMap() {
       this.map_save_btn_busy = true;
       var request = new ROSLIB.ServiceRequest({
@@ -192,7 +353,7 @@ export default {
         let msg = "";
         if (result.success) {
           msg = `Saved ${vm.map_name} map!`;
-          const modal_cl_btn = document.getElementById("modal_close_btn");
+          const modal_cl_btn = document.getElementById("map_modal_close_btn");
           modal_cl_btn.click();
         } else {
           msg = `Failed to save ${vm.map_name} map!`;
@@ -247,6 +408,73 @@ export default {
         });
       }
     },
+    startNavigation(file, args) {
+      var request = new ROSLIB.ServiceRequest({
+        file: file,
+        args: args,
+      });
+      let vm = this;
+      this.startServiceClient.callService(request, function (result) {
+        vm.nav_btn_busy = false;
+        let msg = "";
+        if (result.success) {
+          msg = "Started navigation!";
+          vm.updateNavNodeStatus(true);
+          const modal_cl_btn = document.getElementById("nav_modal_close_btn");
+          modal_cl_btn.click();
+        } else {
+          msg = "failed start navigation!!";
+        }
+        vm.showToast({
+          time: Date.now().toString(),
+          message: msg,
+        });
+      });
+    },
+    stopNavigation(file, args) {
+      var request = new ROSLIB.ServiceRequest({
+        file: file,
+        args: args,
+      });
+      let vm = this;
+      this.stopServiceClient.callService(request, function (result) {
+        vm.nav_btn_busy = false;
+        let msg = "";
+        if (result.success) {
+          msg = "Stoppped navigation!";
+          vm.updateNavNodeStatus(false);
+          const modal_cl_btn = document.getElementById("nav_modal_close_btn");
+          modal_cl_btn.click();
+        } else {
+          msg = "failed stop navigation!!";
+        }
+        vm.showToast({
+          time: Date.now().toString(),
+          message: msg,
+        });
+      });
+    },
+    navStartStop() {
+      this.nav_btn_busy = true;
+      if (this.running_nav_node)
+        this.stopNavigation(
+          this.navRobotType == "simulation" ? "nav" : "real_nav",
+          `gui:=false map:=${this.navMapName} localPlanner:=${this.localPlannerName}`
+        );
+      else
+        this.startNavigation(
+          this.navRobotType == "simulation" ? "nav" : "real_nav",
+          `gui:=false map:=${this.navMapName} localPlanner:=${this.localPlannerName}`
+        );
+    },
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.running_map_node || this.running_nav_node) {
+      alert(this.running_map_node ? "Stop Mapping" : "Stop Navigation");
+      next(false);
+    } else {
+      next();
+    }
   },
   mounted() {
     let vm = this;
@@ -282,25 +510,32 @@ export default {
       rootObject: viewer.scene,
     });
 
+    // Add navigation goal
+    this.navGoal = new ROS2D.NavGoal({
+      ros: this.ros,
+      rootObject: viewer.scene,
+      actionTopic: "/move_base",
+      actionMsgType: "move_base_msgs/MoveBaseAction",
+    });
     // Setup the map client.
-    var gridClient = new ROS2D.OccupancyGridClient({
+    this.gridClient = new ROS2D.OccupancyGridClient({
       ros: this.ros,
       rootObject: viewer.scene,
       continuous: true,
     });
 
     // Scale the canvas to fit to the map
-    gridClient.on("change", function () {
+    this.gridClient.on("change", function () {
       viewer.scaleToDimensions(
-        gridClient.currentGrid.width,
-        gridClient.currentGrid.height
+        vm.gridClient.currentGrid.width,
+        vm.gridClient.currentGrid.height
       );
       viewer.shift(
-        gridClient.currentGrid.pose.position.x,
-        gridClient.currentGrid.pose.position.y
+        vm.gridClient.currentGrid.pose.position.x,
+        vm.gridClient.currentGrid.pose.position.y
       );
+      vm.navGoal.initScale();
       registerMouseHandlers();
-      displayLaserScan();
     });
 
     function registerMouseHandlers() {
@@ -316,6 +551,9 @@ export default {
         } else if (event.nativeEvent.shiftKey === true) {
           panKey = true;
           panView.startPan(event.stageX, event.stageY);
+        } else {
+          var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
+          vm.navGoal.startGoalSelection(pos);
         }
         startPos.x = event.stageX;
         startPos.y = event.stageY;
@@ -332,6 +570,9 @@ export default {
             zoomView.zoom(zoom);
           } else if (panKey === true) {
             panView.pan(event.stageX, event.stageY);
+          } else {
+            var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
+            vm.navGoal.orientGoalSelection(pos);
           }
         }
       });
@@ -342,6 +583,10 @@ export default {
             zoomKey = false;
           } else if (panKey === true) {
             panKey = false;
+          } else {
+            var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
+            var goalPose = vm.navGoal.endGoalSelection(pos);
+            if (vm.running_nav_node) vm.navGoal.sendGoal(goalPose);
           }
           mouseDown = false;
         }
@@ -356,7 +601,7 @@ export default {
     // Laser scanner
     function displayLaserScan() {
       var base_footprint_tf = null;
-      vm.tf_client = vm.ros.TFClient({
+      vm.tf_client = new ROSLIB.TFClient({
         ros: vm.ros,
         fixedFrame: "map",
         angularThres: 0.01,
@@ -370,7 +615,7 @@ export default {
       let marker_fill_color = createjs.Graphics.getRGB(255, 0, 0, 1.0);
       let prev_markers = null;
 
-      vm.laser_listener = vm.ros.Topic({
+      vm.laser_listener = new ROSLIB.Topic({
         ros: vm.ros,
         name: "ninjabot/scan",
         messageType: "sensor_msgs/LaserScan",
@@ -435,13 +680,13 @@ export default {
     }
 
     //  Robot pose marker
-    var robotMarker =new ROS2D.NavigationImage({
+    var robotMarker = new ROS2D.NavigationImage({
       size: 0.8,
       pulse: false,
       image: require("../assets/navTriangle.png"),
     });
-    gridClient.rootObject.addChild(robotMarker);
-    this.poseListner = vm.ros.Topic({
+    vm.gridClient.rootObject.addChild(robotMarker);
+    this.poseListner = new ROSLIB.Topic({
       ros: vm.ros,
       name: "odom",
       messageType: "nav_msgs/Odometry",
@@ -449,13 +694,18 @@ export default {
     this.poseListner.subscribe(function (msg) {
       robotMarker.x = msg.pose.pose.position.x;
       robotMarker.y = -msg.pose.pose.position.y;
-      robotMarker.rotation = -getYawFromQuat(msg.pose.pose.orientation).toFixed(2)
+      robotMarker.rotation = -getYawFromQuat(msg.pose.pose.orientation).toFixed(
+        2
+      );
     });
+
+    displayLaserScan();
   },
   unmounted() {
     this.laser_listener.unsubscribe();
-    this.tf_client.unsubscribe();
+    this.tf_client.unsubscribe("/base_link");
     this.poseListner.unsubscribe();
+    delete this.gridClient;
   },
 };
 </script>
