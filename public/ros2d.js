@@ -1530,21 +1530,10 @@ ROS2D.TraceShape.prototype.__proto__ = createjs.Shape.prototype;
  *   * mapFrame (optional) - the frame of the map to use when sending a goal, like '/map'
  */
 ROS2D.NavGoal = function (options) {
-  var that = this;
   options = options || {};
-  var ros = options.ros;
   this.rootObject = options.rootObject || new createjs.Container();
-  var actionTopic = options.actionTopic || "/move_base";
-  var actionMsgType = options.actionMsgType || "move_base_msgs/MoveBaseAction";
-  this.mapFrame = options.mapFrame || "/map";
 
-  // setup the actionlib client
-  this.actionClient = new ROSLIB.ActionClient({
-    ros: ros,
-    actionName: actionMsgType,
-    serverName: actionTopic,
-  });
-
+  
   // get a handle to the stage
   if (this.rootObject instanceof createjs.Stage) {
     this.stage = this.rootObject;
@@ -1638,46 +1627,7 @@ ROS2D.NavGoal.prototype.endGoalSelection = function () {
   });
 };
 
-/**
- * Send a goal to the navigation stack with the given pose.
- * Draw the goal
- *
- * @param pose - the goal pose (ROSLIB.Pose)
- */
-ROS2D.NavGoal.prototype.sendGoal = function (pose) {
-  // create a goal
-  var goal = new ROSLIB.Goal({
-    actionClient: this.actionClient,
-    goalMessage: {
-      target_pose: {
-        header: {
-          frame_id: this.mapFrame,
-        },
-        pose: pose,
-      },
-    },
-  });
-  goal.send();
 
-  // create a marker for the goal
-  var goalMarker = new ROS2D.ArrowShape({
-    size: 10,
-    strokeSize: 1,
-    fillColor: createjs.Graphics.getRGB(255, 64, 128, 0.66),
-    pulse: true,
-  });
-  goalMarker.x = pose.position.x;
-  goalMarker.y = -pose.position.y;
-  goalMarker.rotation = this.stage.rosQuaternionToGlobalTheta(pose.orientation);
-  goalMarker.scaleX = this.initScaleX;
-  goalMarker.scaleY = this.initScaleY;
-  this.container.addChild(goalMarker);
-
-  var that = this;
-  goal.on("result", function () {
-    that.container.removeChild(goalMarker);
-  });
-};
 
 /**
  * @author Bart van Vliet - bart@dobots.nl

@@ -293,14 +293,14 @@ export default {
       map_save_btn_busy: null,
       map_name: "test",
       laser_listener: null,
-      tf_client: null,
+      baseLink_tf_client: null,
       poseListner: null,
-      gridClient: null,
       nav_btn_busy: false,
       navMapName: "test",
       navGoal: null,
       localPlannerName: "dwa",
       navRobotType: "simulation",
+      base_footprint_tf: null,
     };
   },
   computed: {
@@ -494,7 +494,11 @@ export default {
       name: this.api_stop_service_name,
       serviceType: this.api_srv_type,
     });
-
+    function getYawFromQuat(q) {
+      var quat = new THREE.Quaternion(q.x, q.y, q.z, q.w);
+      var yaw = new THREE.Euler().setFromQuaternion(quat);
+      return yaw["_z"] * (180 / Math.PI);
+    }
     // Create the main viewer.
     var viewer = new ROS2D.Viewer({
       divID: "map",
@@ -510,33 +514,34 @@ export default {
       rootObject: viewer.scene,
     });
 
-    // Add navigation goal
-    this.navGoal = new ROS2D.NavGoal({
-      ros: this.ros,
-      rootObject: viewer.scene,
-      actionTopic: "/move_base",
-      actionMsgType: "move_base_msgs/MoveBaseAction",
-      mapFrame:"map"
-    });
     // Setup the map client.
-    this.gridClient = new ROS2D.OccupancyGridClient({
+   var gridClient = new ROS2D.OccupancyGridClient({
       ros: this.ros,
       rootObject: viewer.scene,
       continuous: true,
     });
-
+    // setup the actionlib client
+    var moveBaseActionClient = new ROSLIB.ActionClient({
+      ros: this.ros,
+      actionName: "move_base_msgs/MoveBaseAction",
+      serverName: "/move_base",
+    });
+    // Add navigation goal
+    this.navGoal = new ROS2D.NavGoal({
+      ros: this.ros,
+      rootObject: gridClient.rootObject,
+    });
     // Scale the canvas to fit to the map
-    this.gridClient.on("change", function () {
+    gridClient.on("change", function () {
       viewer.scaleToDimensions(
-        vm.gridClient.currentGrid.width,
-        vm.gridClient.currentGrid.height
+        gridClient.currentGrid.width,
+        gridClient.currentGrid.height
       );
       viewer.shift(
-        vm.gridClient.currentGrid.pose.position.x,
-        vm.gridClient.currentGrid.pose.position.y
+        gridClient.currentGrid.pose.position.x,
+        gridClient.currentGrid.pose.position.y
       );
       vm.navGoal.initScale();
-      registerMouseHandlers();
     });
 
     function registerMouseHandlers() {
@@ -587,29 +592,61 @@ export default {
           } else {
             var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
             var goalPose = vm.navGoal.endGoalSelection(pos);
-            if (vm.running_nav_node) vm.navGoal.sendGoal(goalPose);
+            if (vm.running_nav_node) {
+              var moveBaseGoal = new ROSLIB.Goal({
+                actionClient: moveBaseActionClient,
+                goalMessage: {
+                  target_pose: {
+                    header: {
+                      frame_id: "map",
+                    },
+                    pose: goalPose,
+                  },
+                },
+              });
+
+              //  Robot pose marker
+             var goalMarker = new ROS2D.NavigationImage({
+                size: 0.63,
+                pulse: true,
+                image: require("../assets/navTriangle.png"),
+              });
+
+              // goalMarker.scaleX = 1.0/gridClient.rootObject.getStage().scaleX;
+              // goalMarker.scaleY =1.0/gridClient.rootObject.getStage().scaleX.scaleY;
+
+              // goalPose.applyTransform(vm.base_footprint_tf);
+              goalMarker.x = goalPose.position.x;
+              goalMarker.y = -goalPose.position.y;
+              goalMarker.rotation = 0;
+
+              gridClient.rootObject.addChild(goalMarker);
+              moveBaseGoal.send();
+              moveBaseGoal.on("result", function () {
+                console.log("ok");
+                gridClient.rootObject.removeChild(goalMarker);
+              });
+              vm.showToast({
+                time: Date.now().toString(),
+                message: "Sending Goal!",
+              });
+            }
           }
           mouseDown = false;
         }
       });
     }
-    function getYawFromQuat(q) {
-      var quat = new THREE.Quaternion(q.x, q.y, q.z, q.w);
-      var yaw = new THREE.Euler().setFromQuaternion(quat);
-      return yaw["_z"] * (180 / Math.PI);
-    }
 
     // Laser scanner
     function displayLaserScan() {
-      var base_footprint_tf = null;
-      vm.tf_client = new ROSLIB.TFClient({
+      vm.baseLink_tf_client = new ROSLIB.TFClient({
         ros: vm.ros,
         fixedFrame: "map",
         angularThres: 0.01,
         transThres: 0.01,
       });
-      vm.tf_client.subscribe("/base_link", function (tf) {
-        base_footprint_tf = tf;
+      vm.baseLink_tf_client.subscribe("/base_link", function (tf) {
+        vm.base_footprint_tf = tf;
       });
 
       let marker_radius = 0.06;
@@ -635,7 +672,7 @@ export default {
           }
           return []; // Skip this point
         });
-        if (base_footprint_tf === null) {
+        if (vm.base_footprint_tf === null) {
           return;
         }
         // TODO: We might be able to apply the tf transform to the container itself, and dont have to do it on each pose.
@@ -662,7 +699,7 @@ export default {
               w: Math.sin(pt[2]),
             }),
           });
-          pose.applyTransform(base_footprint_tf);
+          pose.applyTransform(vm.base_footprint_tf);
           const marker = new createjs.Shape(graphics);
           marker.x = pose.position.x;
           marker.y = -pose.position.y;
@@ -682,11 +719,11 @@ export default {
 
     //  Robot pose marker
     var robotMarker = new ROS2D.NavigationImage({
-      size: 0.8,
+      size: 1.2,
       pulse: false,
-      image: require("../assets/navTriangle.png"),
+      image: require("../assets/navRobo.png"),
     });
-    vm.gridClient.rootObject.addChild(robotMarker);
+    gridClient.rootObject.addChild(robotMarker);
     this.poseListner = new ROSLIB.Topic({
       ros: vm.ros,
       name: "robot_pose",
@@ -695,18 +732,16 @@ export default {
     this.poseListner.subscribe(function (msg) {
       robotMarker.x = msg.position.x;
       robotMarker.y = -msg.position.y;
-      robotMarker.rotation = -getYawFromQuat(msg.orientation).toFixed(
-        2
-      );
+      robotMarker.rotation = -getYawFromQuat(msg.orientation).toFixed(2);
     });
 
     displayLaserScan();
+    registerMouseHandlers();
   },
   unmounted() {
     this.laser_listener.unsubscribe();
-    this.tf_client.unsubscribe("/base_link");
+    this.baseLink_tf_client.unsubscribe("/base_link");
     this.poseListner.unsubscribe();
-    delete this.gridClient;
   },
 };
 </script>
