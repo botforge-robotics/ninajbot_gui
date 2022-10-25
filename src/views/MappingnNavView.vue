@@ -291,16 +291,28 @@ export default {
       startServiceClient: null,
       stopServiceClient: null,
       map_save_btn_busy: null,
-      map_name: "test",
+      map_name: "house",
       laser_listener: null,
       baseLink_tf_client: null,
       poseListner: null,
       nav_btn_busy: false,
-      navMapName: "test",
+      navMapName: "house",
       navGoal: null,
-      localPlannerName: "dwa",
+      localPlannerName: "teb",
       navRobotType: "simulation",
       base_footprint_tf: null,
+      goalMarker: null,
+      goalContainer: null,
+      moveBaseActionClient: null,
+      teb_local_path_topic: "/move_base/TebLocalPlannerROS/local_plan",
+      teb_global_path_topic: "/move_base/TebLocalPlannerROS/global_plan",
+      dwa_local_path_topic: "/move_base/DWAPlannerROS/local_plan",
+      dwa_global_path_topic: "/move_base/DWAPlannerROS/global_plan",
+      global_path_topic: "/move_base/NavfnROS/plan",
+      global_path_shape: null,
+      local_path_shape: null,
+      global_path: null,
+      local_path: null,
     };
   },
   computed: {
@@ -422,6 +434,30 @@ export default {
           vm.updateNavNodeStatus(true);
           const modal_cl_btn = document.getElementById("nav_modal_close_btn");
           modal_cl_btn.click();
+          vm.global_path = new ROSLIB.Topic({
+            ros: vm.ros,
+            name:
+              vm.localPlannerName == "teb"
+                ? vm.teb_global_path_topic
+                : vm.dwa_global_path_topic,
+            messageType: "nav_msgs/Path",
+            throttle_rate: 100,
+          });
+          vm.global_path.subscribe((path) => {
+            vm.global_path_shape.setPath(path);
+          });
+          // vm.local_path = new ROSLIB.Topic({
+          //   ros: vm.ros,
+          //   name:
+          //     vm.localPlannerName == "teb"
+          //       ? vm.teb_local_path_topic
+          //       : vm.dwa_local_path_topic,
+          //   messageType: "nav_msgs/Path",
+          //   throttle_rate: 100,
+          // });
+          // vm.local_path.subscribe((path) => {
+          //   vm.local_path_shape.setPath(path);
+          // });
         } else {
           msg = "failed start navigation!!";
         }
@@ -445,6 +481,8 @@ export default {
           vm.updateNavNodeStatus(false);
           const modal_cl_btn = document.getElementById("nav_modal_close_btn");
           modal_cl_btn.click();
+          vm.global_path.unsubscribe();
+          // vm.local_path.unsubscribe();
         } else {
           msg = "failed stop navigation!!";
         }
@@ -466,6 +504,27 @@ export default {
           this.navRobotType == "simulation" ? "nav" : "real_nav",
           `gui:=false map:=${this.navMapName} localPlanner:=${this.localPlannerName}`
         );
+    },
+    sendGoal(pos) {
+      let vm = this;
+      var moveBaseGoal = new ROSLIB.Goal({
+        actionClient: this.moveBaseActionClient,
+        goalMessage: {
+          target_pose: {
+            header: {
+              frame_id: "map",
+            },
+            pose: pos,
+          },
+        },
+      });
+      this.global_path_shape.visible = true;
+      this.local_path_shape.visible = true;
+      // moveBaseGoal.on("result", function () {
+      //   console.log("ok");
+      //   vm.goalContainer.removeChild(vm.goalMarker);
+      // });
+      moveBaseGoal.send();
     },
   },
   beforeRouteLeave(to, from, next) {
@@ -515,22 +574,40 @@ export default {
     });
 
     // Setup the map client.
-   var gridClient = new ROS2D.OccupancyGridClient({
+    var gridClient = new ROS2D.OccupancyGridClient({
       ros: this.ros,
       rootObject: viewer.scene,
       continuous: true,
     });
     // setup the actionlib client
-    var moveBaseActionClient = new ROSLIB.ActionClient({
+    this.moveBaseActionClient = new ROSLIB.ActionClient({
       ros: this.ros,
       actionName: "move_base_msgs/MoveBaseAction",
       serverName: "/move_base",
     });
+
     // Add navigation goal
     this.navGoal = new ROS2D.NavGoal({
       ros: this.ros,
       rootObject: gridClient.rootObject,
     });
+    // Add planned path
+    this.global_path_shape = new ROS2D.PathShape({
+      strokeSize: 0.3,
+      strokeColor: createjs.Graphics.getRGB(0, 0, 255, 1),
+    });
+    // Add planned path
+    this.local_path_shape = new ROS2D.PathShape({
+      strokeSize: 0.3,
+      strokeColor: createjs.Graphics.getRGB(0, 255, 0, 1),
+    });
+
+    gridClient.rootObject.addChild(this.local_path_shape);
+    gridClient.rootObject.addChild(this.global_path_shape);
+    this.global_path_shape.scaleX = 1.0 / gridClient.rootObject.scaleX;
+    this.global_path_shape.scaleY = 1.0 / gridClient.rootObject.scaleY;
+    this.local_path_shape.scaleX = 1.0 / gridClient.rootObject.scaleX;
+    this.local_path_shape.scaleY = 1.0 / gridClient.rootObject.scaleY;
     // Scale the canvas to fit to the map
     gridClient.on("change", function () {
       viewer.scaleToDimensions(
@@ -542,7 +619,19 @@ export default {
         gridClient.currentGrid.pose.position.y
       );
       vm.navGoal.initScale();
+      vm.global_path_shape.scaleX = 1.0 / gridClient.rootObject.scaleX;
+      vm.global_path_shape.scaleY = 1.0 / gridClient.rootObject.scaleY;
+      vm.local_path_shape.scaleX = 1.0 / gridClient.rootObject.scaleX;
+      vm.local_path_shape.scaleY = 1.0 / gridClient.rootObject.scaleY;
     });
+    this.goalMarker = new ROS2D.NavigationImage({
+      size: 0.63,
+      pulse: true,
+      image: require("../assets/navTriangle.png"),
+    });
+
+    this.goalContainer = new createjs.Container();
+    gridClient.rootObject.addChild(this.goalContainer);
 
     function registerMouseHandlers() {
       // Setup mouse event handlers
@@ -593,39 +682,17 @@ export default {
             var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
             var goalPose = vm.navGoal.endGoalSelection(pos);
             if (vm.running_nav_node) {
-              var moveBaseGoal = new ROSLIB.Goal({
-                actionClient: moveBaseActionClient,
-                goalMessage: {
-                  target_pose: {
-                    header: {
-                      frame_id: "map",
-                    },
-                    pose: goalPose,
-                  },
-                },
-              });
-
               //  Robot pose marker
-             var goalMarker = new ROS2D.NavigationImage({
-                size: 0.63,
-                pulse: true,
-                image: require("../assets/navTriangle.png"),
-              });
+              vm.goalContainer.addChild(vm.goalMarker);
+              vm.goalMarker.x = goalPose.position.x;
+              vm.goalMarker.y = -goalPose.position.y;
+              vm.goalMarker.rotation = -getYawFromQuat(
+                goalPose.orientation
+              ).toFixed(2);
+              // vm.goalMarker.scaleX = 1.0/gridClient.rootObject.scaleX;
+              // vm.goalMarker.scaleY =1.0/gridClient.rootObject.scaleY;
+              vm.sendGoal(goalPose);
 
-              // goalMarker.scaleX = 1.0/gridClient.rootObject.getStage().scaleX;
-              // goalMarker.scaleY =1.0/gridClient.rootObject.getStage().scaleX.scaleY;
-
-              // goalPose.applyTransform(vm.base_footprint_tf);
-              goalMarker.x = goalPose.position.x;
-              goalMarker.y = -goalPose.position.y;
-              goalMarker.rotation = 0;
-
-              gridClient.rootObject.addChild(goalMarker);
-              moveBaseGoal.send();
-              moveBaseGoal.on("result", function () {
-                console.log("ok");
-                gridClient.rootObject.removeChild(goalMarker);
-              });
               vm.showToast({
                 time: Date.now().toString(),
                 message: "Sending Goal!",
