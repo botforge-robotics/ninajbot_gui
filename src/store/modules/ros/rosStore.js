@@ -64,7 +64,7 @@ const state = {
     params: [],
     paramsCount: 0,
   },
-  running_map_node:false,
+  running_map_node: false,
   running_nav_node: false,
   image_topic_name: "/",
   logs: [],
@@ -76,9 +76,8 @@ const state = {
   max_angular_vel: 0.2,
   api_start_service_name: "/ninjabot_launcher_api_start",
   api_stop_service_name: "/ninjabot_launcher_api_stop",
-  api_srv_type:"ninjabot_launcher_api/NinjabotApi"
+  api_srv_type: "ninjabot_launcher_api/NinjabotApi"
 };
-
 export default {
   state,
   getters,

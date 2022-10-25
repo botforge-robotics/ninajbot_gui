@@ -23,7 +23,7 @@
 
     <!-- buttons nav,map, save -->
     <div
-      class="d-flex flex-row justify-content-end w-100 mt-4"
+      class="d-flex flex-row justify-content-end align-items-center w-100 mt-4"
       style="height: 40px"
     >
       <button
@@ -67,7 +67,17 @@
       >
         {{ running_nav_node ? "Stop Navigation" : "Start Navigation" }}
       </button>
-
+      <div class="form-check me-5" v-if="running_nav_node">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          v-model="poseEstimateBtn"
+          id="localizeBtn"
+        />
+        <label class="form-check-label" for="localizeBtn">
+          Pose Estimate
+        </label>
+      </div>
       <button
         type="button"
         data-bs-toggle="modal"
@@ -283,6 +293,7 @@ import { mapGetters, mapMutations } from "vuex";
 import mapView from "../components/mapComp.vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required, alpha, minLength, maxLength } from "@vuelidate/validators";
+import ROSLIB from "roslib/src/RosLib";
 export default {
   setup: () => ({ v$: useVuelidate() }),
   data() {
@@ -313,6 +324,8 @@ export default {
       local_path_shape: null,
       global_path: null,
       local_path: null,
+      poseEstimateBtn: false,
+      initialPosePub: false,
     };
   },
   computed: {
@@ -608,6 +621,13 @@ export default {
     this.global_path_shape.scaleY = 1.0 / gridClient.rootObject.scaleY;
     this.local_path_shape.scaleX = 1.0 / gridClient.rootObject.scaleX;
     this.local_path_shape.scaleY = 1.0 / gridClient.rootObject.scaleY;
+
+    // Initial pose publisher
+    this.initialPosePub = new ROSLIB.Topic({
+      ros: this.ros,
+      name: "/initialpose",
+      messageType: "geometry_msgs/PoseWithCovarianceStamped",
+    });
     // Scale the canvas to fit to the map
     gridClient.on("change", function () {
       viewer.scaleToDimensions(
@@ -681,7 +701,23 @@ export default {
           } else {
             var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
             var goalPose = vm.navGoal.endGoalSelection(pos);
-            if (vm.running_nav_node) {
+            if (vm.poseEstimateBtn && vm.running_nav_node) {
+              var poseMsg = new ROSLIB.Message({
+                header: {
+                  frame_id: "map",
+                },
+                pose: {
+                  pose: goalPose,
+                  covariance: [
+                    0.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                    0.06853892326654787,
+                  ],
+                },
+              });
+              vm.initialPosePub.publish(poseMsg);
+            } else if (!vm.poseEstimateBtn && vm.running_nav_node) {
               //  Robot pose marker
               vm.goalContainer.addChild(vm.goalMarker);
               vm.goalMarker.x = goalPose.position.x;
