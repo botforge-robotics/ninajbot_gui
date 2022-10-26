@@ -1,6 +1,6 @@
 <template>
   <div class="disconnected-page h-100">
-    <h1 class="text-muted text-center">Connect to Ninjabot</h1>
+    <h1 class="text-muted text-center">Ninjabot Disconnected</h1>
     <div
       class="d-flex flex-row justify-content-center align-items-center h-100"
     >
