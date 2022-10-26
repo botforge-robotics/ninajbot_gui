@@ -23,71 +23,94 @@
 
     <!-- buttons nav,map, save -->
     <div
-      class="d-flex flex-row justify-content-end align-items-center w-100 mt-4"
-      style="height: 40px"
+      class="
+        d-flex
+        flex-row
+        justify-content-between
+        align-items-center
+        w-100
+        mt-4
+      "
     >
-      <button
-        type="button"
-        class="btn me-5"
-        :class="{
-          'btn-success': !running_map_node,
-          'btn-danger': running_map_node,
-        }"
-        @click="mapStartStop"
-        :disabled="map_btn_busy"
-        v-if="!running_nav_node"
-      >
-        <span
-          class="spinner-grow spinner-grow-sm"
-          role="status"
-          aria-hidden="true"
-          v-if="map_btn_busy"
-        ></span>
-        {{
-          map_btn_busy
-            ? running_map_node
-              ? "Stopping"
-              : "Starting"
-            : running_map_node
-            ? "Stop Mapping"
-            : "Start Mapping"
-        }}
-      </button>
-
-      <button
-        type="button"
-        class="btn btn-primary me-5"
-        data-bs-toggle="modal"
-        data-bs-target="#navStartModal"
-        :class="{
-          'btn-success': !running_nav_node,
-          'btn-danger': running_nav_node,
-        }"
-        v-if="!running_map_node"
-      >
-        {{ running_nav_node ? "Stop Navigation" : "Start Navigation" }}
-      </button>
-      <div class="form-check me-5" v-if="running_nav_node">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          v-model="poseEstimateBtn"
-          id="localizeBtn"
-        />
-        <label class="form-check-label" for="localizeBtn">
-          Pose Estimate
-        </label>
+      <div>
+        <button
+          type="button"
+          class="btn me-5"
+          :class="{
+            'btn-success': !running_map_node,
+            'btn-danger': running_map_node,
+          }"
+          @click="mapStartStop"
+          :disabled="map_btn_busy"
+          v-if="!running_nav_node"
+        >
+          <span
+            class="spinner-grow spinner-grow-sm"
+            role="status"
+            aria-hidden="true"
+            v-if="map_btn_busy"
+          ></span>
+          {{
+            map_btn_busy
+              ? running_map_node
+                ? "Stopping"
+                : "Starting"
+              : running_map_node
+              ? "Stop Mapping"
+              : "Start Mapping"
+          }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary me-5"
+          data-bs-toggle="modal"
+          data-bs-target="#navStartModal"
+          :class="{
+            'btn-success': !running_nav_node,
+            'btn-danger': running_nav_node,
+          }"
+          v-if="!running_map_node"
+        >
+          {{ running_nav_node ? "Stop Navigation" : "Start Navigation" }}
+        </button>
+        <div class="form-check me-5" v-if="running_nav_node">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            v-model="poseEstimateBtn"
+            id="localizeBtn"
+          />
+          <label class="form-check-label" for="localizeBtn">
+            Pose Estimate
+          </label>
+        </div>
+        <button
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target="#savemap"
+          class="btn text-white me-5 orange-Btn"
+          :disabled="!running_map_node"
+          v-if="!running_nav_node"
+        >
+          Save Map
+        </button>
       </div>
-      <button
-        type="button"
-        data-bs-toggle="modal"
-        data-bs-target="#savemap"
-        class="btn text-white me-5 orange-Btn"
-        :disabled="!running_map_node"
-        v-if="!running_nav_node"
-      >
-        Save Map
-      </button>
+      <div class="d-flex w-50 flex-row justify-content-end">
+        <div class="d-flex flex-column me-4">
+          <p><strong>Zoom: </strong>CTRL + Mouse L click & drag.</p>
+          <p><strong>Pan: </strong>SHIFT + Mouse L click & drag.</p>
+        </div>
+        <div class="d-flex flex-column" v-if="running_nav_node">
+          <p>
+            <strong>Goal Publish: </strong>Disable Pose estimate button, Mouse L
+            click(position) & drag(Orientation).
+          </p>
+          <p>
+            <strong>Pose Estimate: </strong>Enable Pose estimate button, Mouse L
+            click(position) & drag(Orientation).
+          </p>
+        </div>
+      </div>
     </div>
     <!-- Map Modal -->
     <div
