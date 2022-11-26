@@ -4,20 +4,138 @@
       :title="running_nav_node ? 'Navigation' : 'Mapping'"
     ></jumbotron-Header>
     <div class="d-flex mt-4 flex-row w-100 text-center align-items-center">
-      <p class="col-4 fs-3 fw-semibold fst-italic" style="width: 520px">
+      <p
+        class="sec-title col-4 fs-3 fw-semibold fst-italic"
+        style="width: 520px"
+      >
         Camera Feed
       </p>
-      <p class="col-4 fs-3 fw-semibold fst-italic">Control</p>
-      <p class="col-4 fs-3 fw-semibold fst-italic" style="width: 640px">Map</p>
+      <p class="sec-title col-4 fs-3 fw-semibold fst-italic">Control</p>
+      <p
+        class="sec-title col-4 fs-3 fw-semibold fst-italic d-xl-block d-lg-none"
+        style="width: 640px"
+      >
+        Map
+      </p>
     </div>
     <div class="teleopConatiner">
-      <div class="d-flex flex-row justify-content-evenly align-items-center">
-        <image-view
-          class="col-4 p-0"
-          style="max-width: 480px !important"
-        ></image-view>
-        <joy-stick class="col-4 ps-3"></joy-stick>
-        <map-view class="col-4 p-0"></map-view>
+      <div
+        class="
+          d-flex
+          flex-xl-row flex-lg-column
+          justify-content-evenly
+          align-items-center
+        "
+      >
+        <div class="col-lg-12 col-xl-6 d-flex flex-row">
+          <image-view class="col-6 p-0"></image-view>
+          <joy-stick class="col-6 ps-3"></joy-stick>
+        </div>
+        <p
+          class="
+            sec-title
+            col-lg-12
+            text-center
+            mt-lg-3
+            fs-3
+            fw-semibold
+            fst-italic
+            d-xl-none d-lg-block
+          "
+          style="width: 640px"
+        >
+          Map
+        </p>
+        <div class="d-flex flex-lg-row">
+          <div
+            class="d-flex flex-lg-column d-xl-none me-5 justify-content-evenly"
+          >
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @touchstart="zoom_btn = true"
+              @touchend="zoom_btn = false"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-arrows-angle-expand me-2"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707z"
+                />
+              </svg>
+              Zoom
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @touchstart="pan_btn = true"
+              @touchend="pan_btn = false"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-arrows-move me-2"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10zM.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708l-2-2zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8z"
+                />
+              </svg>
+              Pan
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @touchstart="localize_btn = true"
+              @touchend="localize_btn = false"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-geo me-2"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"
+                />
+              </svg>
+              Localize
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @touchstart="goal_btn = true"
+              @touchend="goal_btn = false"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-geo-alt-fill"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"
+                />
+              </svg>
+              Goal
+            </button>
+          </div>
+          <map-view class="col-xl-4 col-lg-12 p-0 mt-lg-1"></map-view>
+        </div>
       </div>
     </div>
 
@@ -35,7 +153,7 @@
       <div>
         <button
           type="button"
-          class="btn me-5"
+          class="btn me-xl-5 me-lg-2"
           :class="{
             'btn-success': !running_map_node,
             'btn-danger': running_map_node,
@@ -62,7 +180,7 @@
         </button>
         <button
           type="button"
-          class="btn btn-primary me-5"
+          class="btn btn-primary me-xl-5 me-lg-2"
           data-bs-toggle="modal"
           data-bs-target="#navStartModal"
           :class="{
@@ -73,22 +191,39 @@
         >
           {{ running_nav_node ? "Stop Navigation" : "Start Navigation" }}
         </button>
-        <div class="form-check me-5" v-if="running_nav_node">
+        <div
+          class="form-check mt-4 d-lg-none d-xl-block"
+          v-if="running_nav_node"
+        >
           <input
             class="form-check-input"
             type="checkbox"
             v-model="poseEstimateBtn"
+            @click="goal_checkbox_btn = false"
             id="localizeBtn"
           />
           <label class="form-check-label" for="localizeBtn">
             Pose Estimate
           </label>
         </div>
+        <div
+          class="form-check mt-4 d-lg-none d-xl-block"
+          v-if="running_nav_node"
+        >
+          <input
+            class="form-check-input"
+            type="checkbox"
+            v-model="goal_checkbox_btn"
+            @click="poseEstimateBtn = false"
+            id="localizeBtn"
+          />
+          <label class="form-check-label" for="localizeBtn"> Send Goal </label>
+        </div>
         <button
           type="button"
           data-bs-toggle="modal"
           data-bs-target="#savemap"
-          class="btn text-white me-5 orange-Btn"
+          class="btn text-white me-xl-5 me-lg-2 orange-Btn"
           :disabled="!running_map_node"
           v-if="!running_nav_node"
         >
@@ -349,6 +484,11 @@ export default {
       local_path: null,
       poseEstimateBtn: false,
       initialPosePub: false,
+      zoom_btn: false,
+      pan_btn: false,
+      localize_btn: false,
+      goal_btn: false,
+      goal_checkbox_btn: false,
     };
   },
   computed: {
@@ -573,11 +713,11 @@ export default {
   },
   mounted() {
     let vm = this;
-
-    // resixze image view
-    document.getElementById("camera").style.width = "480px";
-    document.getElementById("camera").style.height = "360px";
-
+    if (screen.width > 1024) {
+      // resixze image view
+      document.getElementById("camera").style.width = "480px";
+      document.getElementById("camera").style.height = "360px";
+    }
     // register service clients
     this.startServiceClient = new ROSLIB.Service({
       ros: this.ros,
@@ -597,8 +737,8 @@ export default {
     // Create the main viewer.
     var viewer = new ROS2D.Viewer({
       divID: "map",
-      width: 640,
-      height: 480,
+      width: screen.width > 1024 ? 700 : 800,
+      height: screen.width > 1024 ? 525 : 600,
     });
     // Add zoom to the viewer.
     var zoomView = new ROS2D.ZoomView({
@@ -682,11 +822,13 @@ export default {
       var zoomKey = false;
       var panKey = false;
       var startPos = new ROSLIB.Vector3();
+
+      createjs.Touch.enable(viewer.scene);
       viewer.scene.addEventListener("stagemousedown", function (event) {
-        if (event.nativeEvent.ctrlKey === true) {
+        if (event.nativeEvent.ctrlKey === true || vm.zoom_btn) {
           zoomKey = true;
           zoomView.startZoom(event.stageX, event.stageY);
-        } else if (event.nativeEvent.shiftKey === true) {
+        } else if (event.nativeEvent.shiftKey === true || vm.pan_btn) {
           panKey = true;
           panView.startPan(event.stageX, event.stageY);
         } else {
@@ -724,7 +866,11 @@ export default {
           } else {
             var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
             var goalPose = vm.navGoal.endGoalSelection(pos);
-            if (vm.poseEstimateBtn && vm.running_nav_node) {
+            if (
+              (vm.poseEstimateBtn || vm.localize_btn) &&
+              vm.running_nav_node &&
+              (!vm.goal_checkbox_btn || !vm.goal_btn)
+            ) {
               var poseMsg = new ROSLIB.Message({
                 header: {
                   frame_id: "map",
@@ -740,7 +886,11 @@ export default {
                 },
               });
               vm.initialPosePub.publish(poseMsg);
-            } else if (!vm.poseEstimateBtn && vm.running_nav_node) {
+            } else if (
+              (!vm.poseEstimateBtn || !vm.localize_btn) &&
+              vm.running_nav_node &&
+              (vm.goal_checkbox_btn || vm.goal_btn)
+            ) {
               //  Robot pose marker
               vm.goalContainer.addChild(vm.goalMarker);
               vm.goalMarker.x = goalPose.position.x;
@@ -901,5 +1051,10 @@ img #camera {
 .orange-Btn:hover {
   background-color: #bd5404 !important;
   color: rgb(216, 216, 216) !important;
+}
+@media screen and (max-width: 1024px) {
+  .sec-title {
+    font-size: 21px !important;
+  }
 }
 </style>

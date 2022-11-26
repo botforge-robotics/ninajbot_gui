@@ -2,8 +2,8 @@
   <div class="home-page h-100">
     <jumbotron-Header title="Teleop"></jumbotron-Header>
     <div class="d-flex mt-4 flex-row w-100 text-center justify-content-evenly">
-      <p class="col col-6 fs-3 fw-semibold  fst-italic" >Camera Feed</p>
-      <p class="col col-6 fs-3 fw-semibold  fst-italic">Control</p>
+      <p class="sec-title col col-6 fs-3 fw-semibold fst-italic">Camera Feed</p>
+      <p class="sec-title col col-6 fs-3 fw-semibold fst-italic">Control</p>
     </div>
     <div class="teleopConatiner">
       <div class="d-flex flex-row justify-content-evenly">
@@ -22,23 +22,26 @@ export default {
   data() {
     return {};
   },
-  computed: {
-  },
+  computed: {},
   components: {
     imageView,
     joyStick,
     jumbotronHeader,
   },
   methods: {},
- 
 };
 </script>
-
+@media screen and (max-width: 1024px) {
 
 <style scoped>
 .home-page {
   min-height: 100vh;
   padding: 20px;
   padding-top: 0;
+}
+@media screen and (max-width: 1024px) {
+  .sec-title {
+    font-size: 21px !important;
+  }
 }
 </style>

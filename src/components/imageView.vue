@@ -1,8 +1,7 @@
 <template>
   <div class="d-flex flex-column align-items-center">
-   
-      <img id="camera" />
-    
+    <img id="camera" />
+
     <select
       class="form-select mt-2"
       style="max-width: 400px"
@@ -79,5 +78,11 @@ export default {
   width: 640px;
   height: 480px;
   background-color: black;
+}
+@media screen and (max-width: 1024px) {
+  #camera {
+    width: 45vw;
+    height: 34.6vw;
+  }
 }
 </style>

@@ -11,7 +11,7 @@
         align-items-start
       "
     >
-      <div class="col-4">
+      <div class="col-xl-4 col-lg-6 pe-lg-4">
         <div class="d-flex flex-column justify-content-between">
           <!-- EYES -->
           <!-- 
@@ -363,7 +363,9 @@
               aria-labelledby="pills-customBodyLR-tab"
               tabindex="0"
             >
-              <div class="d-flex flex-column justify-content-evenly w-100 h-100">
+              <div
+                class="d-flex flex-column justify-content-evenly w-100 h-100"
+              >
                 <div class="d-flex flex-row justify-content-evenly">
                   <rgb-strip
                     title="Left"
@@ -539,5 +541,19 @@ select:focus {
 }
 #rgbCard {
   min-height: 897px;
+}
+@media screen and (max-width: 1024px) {
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .card-header {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  label.btn {
+    font-size: 12px;
+    align-self: center;
+  }
 }
 </style>

@@ -34,4 +34,12 @@
 .disconnected-page div svg {
   opacity: 0.5;
 }
+@media screen and (max-width: 1024px) {
+  .disconnected-page img {
+    width: 300px;
+  }
+  .disconnected-page svg {
+    width: 100px;
+  }
+}
 </style>

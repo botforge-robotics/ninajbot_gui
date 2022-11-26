@@ -42,10 +42,10 @@
         </option>
       </select>
     </div>
-    <div class="d-flex flex-row align-items-center">
-      <label for="anim" class="form-label me-3 fst-italic">Animation: </label>
+    <div class="d-flex flex-lg-row align-items-center">
+      <label for="anim" class="form-label me-3 fst-italic">Anim.: </label>
       <select
-        class="form-select"
+        class="form-select me-lg-2"
         style="max-width: 150px"
         aria-label="animation"
         :disabled="disable"
@@ -191,4 +191,12 @@ export default {
 </script>
 
 <style>
+@media screen and (max-width: 1024px) {
+  label {
+    font-size: 13px;
+  }
+  select {
+    font-size: 13px !important;
+  }
+}
 </style>

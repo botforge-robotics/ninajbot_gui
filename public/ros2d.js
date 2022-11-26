@@ -1284,11 +1284,11 @@ ROS2D.ZoomView.prototype.zoom = function (zoom) {
   this.stage.x =
     this.startShift.x -
     (this.center.x - this.startShift.x) *
-      (this.stage.scaleX / this.startScale.x - 1);
+    (this.stage.scaleX / this.startScale.x - 1);
   this.stage.y =
     this.startShift.y -
     (this.center.y - this.startShift.y) *
-      (this.stage.scaleY / this.startScale.y - 1);
+    (this.stage.scaleY / this.startScale.y - 1);
 };
 
 /**
@@ -1533,7 +1533,7 @@ ROS2D.NavGoal = function (options) {
   options = options || {};
   this.rootObject = options.rootObject || new createjs.Container();
 
-  
+
   // get a handle to the stage
   if (this.rootObject instanceof createjs.Stage) {
     this.stage = this.rootObject;

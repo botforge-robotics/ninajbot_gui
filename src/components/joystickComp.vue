@@ -70,6 +70,8 @@
               class="btn shadow arrow-btn"
               @mousedown="publishVel({ linear: max_linear_vel, angular: 0.0 })"
               @mouseup="publishVel({ linear: 0.0, angular: 0.0 })"
+              @touchstart="publishVel({ linear: max_linear_vel, angular: 0.0 })"
+              @touchend="publishVel({ linear: 0.0, angular: 0.0 })"
             >
               &#8593;
             </button>
@@ -79,6 +81,10 @@
               class="btn shadow arrow-btn"
               @mousedown="publishVel({ linear: 0.0, angular: max_angular_vel })"
               @mouseup="publishVel({ linear: 0.0, angular: 0.0 })"
+              @touchstart="
+                publishVel({ linear: 0.0, angular: max_angular_vel })
+              "
+              @touchend="publishVel({ linear: 0.0, angular: 0.0 })"
             >
               &#8592;
             </button>
@@ -86,6 +92,10 @@
               class="btn shadow arrow-btn"
               @mousedown="publishVel({ linear: -max_linear_vel, angular: 0.0 })"
               @mouseup="publishVel({ linear: 0.0, angular: 0.0 })"
+              @touchstart="
+                publishVel({ linear: -max_linear_vel, angular: 0.0 })
+              "
+              @touchend="publishVel({ linear: 0.0, angular: 0.0 })"
             >
               &#8595;
             </button>
@@ -95,6 +105,10 @@
                 publishVel({ linear: 0.0, angular: -max_angular_vel })
               "
               @mouseup="publishVel({ linear: 0.0, angular: 0.0 })"
+              @touchstart="
+                publishVel({ linear: 0.0, angular: -max_angular_vel })
+              "
+              @touchend="publishVel({ linear: 0.0, angular: 0.0 })"
             >
               &#8594;
             </button>
@@ -108,8 +122,13 @@
         aria-labelledby="pills-joy-tab"
         tabindex="0"
       >
-        <div >
-          <img style="height: 19em;" src="@/assets/images/joystick_control.jpg" alt="joystick_control.png" >
+        <div>
+          <img
+            id="joystick_img"
+            style="width: 95%"
+            src="@/assets/images/joystick_control.jpg"
+            alt="joystick_control.png"
+          />
         </div>
       </div>
     </div>
@@ -183,7 +202,7 @@ export default {
       linear_speed: 0.0,
       angular_speed: 0.0,
       timer: null,
-      showVelSlider:true
+      showVelSlider: true,
     };
   },
   computed: {
@@ -297,5 +316,35 @@ button.nav-link:hover {
 }
 label p {
   color: #f2771a;
+}
+#zone_joystick {
+  width: 100%;
+  height: 100%;
+}
+@media screen and (max-width: 1024px) {
+  .arrow-btn {
+    width: 80px;
+    height: 80px;
+    font-size: 30px !important;
+  }
+  .tab-content {
+    min-height: 260px;
+  }
+  .tab-pane {
+    min-height: 260px;
+  }
+  #zone_joystick {
+    position: relative;
+    min-height: 260px;
+  }
+  #joystick_img {
+    width: 45vw;
+  }
+  .form-label {
+    font-size: 12.5px !important;
+  }
+  .form-label p {
+    font-size: 15px !important;
+  }
 }
 </style>

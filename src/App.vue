@@ -23,7 +23,10 @@
             >
           </li>
           <li class="nav-item">
-            <router-link to="/mappingnNav" active-class="active" class="nav-link"
+            <router-link
+              to="/mappingnNav"
+              active-class="active"
+              class="nav-link"
               >Mapping & Navigation</router-link
             >
           </li>
@@ -53,19 +56,20 @@
           <input
             class="form-control me-2"
             placeholder="Robot IP"
+            id="ip-input"
             v-model="robotIp"
             :disabled="isRoboConnected"
           />
           <button
             v-if="!isRoboConnected"
-            class="btn btn-outline-success"
+            class="connect-btn btn btn-outline-success"
             @click="connectRobot('ws://' + this.robotIp + ':9090')"
           >
             Connect
           </button>
           <button
             v-if="isRoboConnected"
-            class="btn btn-outline-danger"
+            class="connect-btn btn btn-outline-danger"
             @click="disconnectRobot"
           >
             Disconnect
@@ -174,7 +178,25 @@ input.form-control:focus {
   border-color: #f2771a !important;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgb(242, 119, 26);
 }
-.page-container{
-margin-top:60px;
+.page-container {
+  margin-top: 60px;
+}
+@media screen and (max-width: 1024px) {
+  .page-container {
+    margin-top: 53px;
+  }
+  .navbar-brand {
+    width: 120px;
+  }
+  .navbar-nav li {
+    font-size: 13px;
+  }
+  #ip-input {
+    width: 130px;
+  }
+  .connect-btn {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+  }
 }
 </style>

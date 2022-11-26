@@ -5,25 +5,27 @@
 <script>
 import { mapGetters } from "vuex";
 export default {
-  data(){
-    return{
-    }
+  data() {
+    return {};
   },
   computed: {
     ...mapGetters(["ros"]),
   },
-  mounted() {
-   
-  },
-  unmounted() {
-  },
+  mounted() {},
+  unmounted() {},
 };
 </script>
 
 <style>
 #map {
-  width: 640px;
-  height: 480px;
+  width: 700px;
+  height: 525px;
   background-color: black;
+}
+@media screen and (max-width: 1024px) {
+  #map {
+    width: 800px;
+    height: 600px;
+  }
 }
 </style>
