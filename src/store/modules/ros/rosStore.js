@@ -12,6 +12,7 @@ const strip = {
   reverse: false,
 };
 const state = {
+  robotIP: "localhost",
   roboConnectionStatus: false,
   ros: new ROSLIB.Ros(),
   vel_pub: null,

@@ -27,16 +27,16 @@ export const updateNodesListAction = ({ commit, state }) => {
             nodes["nodesCount"] += 1;
             nodes["nodes"].sort((a, b) => {
               let fa = a.node.toLowerCase(),
-                  fb = b.node.toLowerCase();
-          
+                fb = b.node.toLowerCase();
+
               if (fa < fb) {
-                  return -1;
+                return -1;
               }
               if (fa > fb) {
-                  return 1;
+                return 1;
               }
               return 0;
-          });
+            });
             commit("updateNodesList", nodes);
           },
           () => {
@@ -78,19 +78,19 @@ export const updateTopicsListAction = ({ commit, state }) => {
             top["msgdetails"] = { ...data };
             topics["topics"].sort((a, b) => {
               let fa = a.topic.toLowerCase(),
-                  fb = b.topic.toLowerCase();
-          
+                fb = b.topic.toLowerCase();
+
               if (fa < fb) {
-                  return -1;
+                return -1;
               }
               if (fa > fb) {
-                  return 1;
+                return 1;
               }
               return 0;
-          });
+            });
             commit("updateTopicsList", topics);
           },
-          () => {}
+          () => { }
         );
       });
     },
@@ -122,19 +122,19 @@ export const updateServicesListAction = ({ commit, state }) => {
             ser["srvType"] = data;
             services["services"].sort((a, b) => {
               let fa = a.service.toLowerCase(),
-                  fb = b.service.toLowerCase();
-          
+                fb = b.service.toLowerCase();
+
               if (fa < fb) {
-                  return -1;
+                return -1;
               }
               if (fa > fb) {
-                  return 1;
+                return 1;
               }
               return 0;
-          });
+            });
             commit("updateServicesList", services);
           },
-          () => {}
+          () => { }
         );
       });
     },
@@ -161,16 +161,16 @@ export const updateActionServersListAction = ({ commit, state }) => {
       });
       actions["servers"].sort((a, b) => {
         let fa = a.server.toLowerCase(),
-            fb = b.server.toLowerCase();
-    
+          fb = b.server.toLowerCase();
+
         if (fa < fb) {
-            return -1;
+          return -1;
         }
         if (fa > fb) {
-            return 1;
+          return 1;
         }
         return 0;
-    });
+      });
       commit("updateActionServersList", actions);
     },
     () => {
@@ -203,16 +203,16 @@ export const updateParamsListAction = ({ commit, state }) => {
           param["value"] = val;
           params["params"].sort((a, b) => {
             let fa = a.param.toLowerCase(),
-                fb = b.param.toLowerCase();
-        
+              fb = b.param.toLowerCase();
+
             if (fa < fb) {
-                return -1;
+              return -1;
             }
             if (fa > fb) {
-                return 1;
+              return 1;
             }
             return 0;
-        });
+          });
           commit("updateParamsList", params);
         });
       });

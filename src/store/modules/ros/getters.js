@@ -4,6 +4,9 @@ export const isRoboConnected = (state) => {
 export const ros = (state) => {
   return state.ros;
 };
+export const robotIP = (state) => {
+  return state.robotIP;
+};
 export const vel_pub = (state) => {
   return state.vel_pub;
 };

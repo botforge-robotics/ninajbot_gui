@@ -2,12 +2,6 @@
 trap "exit" INT TERM ERR
 trap "kill 0" EXIT
 
-#starting ros core service
-# echo starting roscore
-# roscore &
-# echo wait untill roscore starts
-# sleep 2.5s
-
 # starting gui api node
 echo starting launcher api ros
 rosrun ninjabot_launcher_api launcher_api.py &
@@ -26,15 +20,13 @@ roslaunch rosbridge_server  rosbridge_websocket.launch &
 echo wait untill rosbridge node starts
 sleep 3s
 
-# starting joystick teleop control node
-echo starting joystick teleop node
-roslaunch ninjabot_teleop joy_control.launch  &
-echo wait untill joystick teleop node starts
-sleep 3s
-
 # starting GUI
 echo starting GUI
-npm run electron:serve &
+# npm run electron:serve &
+npm run serve &
+# cd ~/Desktop/ninjabot_gui/dist
+#http-server -p 8080 --cors &
+
 wait
 
-#wair for ctrlC & kill all procsses
+#wait for ctrlC & kill all procsses

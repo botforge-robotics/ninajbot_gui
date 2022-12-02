@@ -13,15 +13,15 @@ export default {
   data() {
     return {
       urdfClient: null,
-      tfClient:null,
-      viewer:null
+      tfClient: null,
+      viewer: null,
     };
   },
   components: {
     jumbotronHeader,
   },
   computed: {
-    ...mapGetters(["ros"]),
+    ...mapGetters(["ros", "robotIP"]),
   },
   methods: {},
   mounted() {
@@ -31,7 +31,7 @@ export default {
       width: 1280,
       height: 720,
       antialias: true,
-      background: "#efefef"
+      background: "#efefef",
     });
     // Add a grid.
     this.viewer.addObject(new ROS3D.Grid());
@@ -48,14 +48,14 @@ export default {
     this.urdfClient = new ROS3D.UrdfClient({
       ros: this.ros,
       tfClient: this.tfClient,
-      path: "http://localhost:8080/",
+      path: "http://" + this.robotIP + ":8080/",
       rootObject: this.viewer.scene,
     });
   },
-  unmounted(){
+  unmounted() {
     this.tfClient.dispose();
     this.viewer.stop();
-  }
+  },
 };
 </script>
   

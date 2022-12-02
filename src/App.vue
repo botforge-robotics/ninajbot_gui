@@ -63,7 +63,10 @@
           <button
             v-if="!isRoboConnected"
             class="connect-btn btn btn-outline-success"
-            @click="connectRobot('ws://' + this.robotIp + ':9090')"
+            @click="
+              connectRobot('ws://' + this.robotIp + ':9090');
+              updateRobotIP({ data: this.robotIp });
+            "
           >
             Connect
           </button>
@@ -111,6 +114,7 @@ export default {
       "body_ws2812b_pub",
       "left_ws2812b_pub",
       "right_ws2812b_pub",
+      "updateRobotIP",
     ]),
   },
 
