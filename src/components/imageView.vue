@@ -72,6 +72,13 @@ export default {
       },
       () => {}
     );
+    var to = this.image_topic_name.lastIndexOf("/");
+    to = to == -1 ? this.image_topic_name.length : to + 1;
+    this.stream_link =
+      "http://" +
+      this.robotIP +
+      ":9000/stream?topic=" +
+      this.image_topic_name.substring(0, to - 1);
   },
   // unmounted() {
   //   this.unSubscribeImage();

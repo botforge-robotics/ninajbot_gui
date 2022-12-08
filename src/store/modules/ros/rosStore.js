@@ -67,7 +67,7 @@ const state = {
   },
   running_map_node: false,
   running_nav_node: false,
-  image_topic_name: "/",
+  image_topic_name: "/usb_cam/image_raw/compressed",
   logs: [],
   max_allowed_linear_vel: 3.0,
   max_allowed_angular_vel: 3.0,
