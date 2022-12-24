@@ -5,7 +5,7 @@ echo Enter robot ip:
 read IP 
 Master_URL="http://$IP:11311"
 # Get workstatio IP address
-WSIP="$(hostname -I | sed 's/[[:space:]]//g')"
+WSIP="$(hostname -I | awk '{ print $1; }')"
 # print out robot and workstation IP
 echo Robot IP is $IP
 echo This pc IP is $WSIP
