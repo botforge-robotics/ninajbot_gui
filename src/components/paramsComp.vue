@@ -1,11 +1,15 @@
 <template>
-  <div class="params-page">
-    <jumbotron-Header title="Params"></jumbotron-Header>
-    <div class="mt-4">
-      <div class="rounded-pill fs-4 bg-dark text-bg-dark ps-4 pe-4 pt-2 pb-2">
-        Params
-        <span class="badge bg-warning">{{ paramsList.paramsCount }}</span>
-      </div>
+  <div class="card mb-4">
+    <div class="card-header fs-4">Paramters <span class="badge bg-warning">{{ paramsList.paramsCount }}</span>
+      <button
+            type="button"
+            class="btn btn_black text-white ms-4"
+            @click="updateParams()"
+          >
+            Refresh
+          </button>
+    </div>
+    <div class="card-body param_card_body">
       <div
         class="d-flex flex-row justify-content-center mt-2"
         v-for="(param, index) in paramsList.params"
@@ -19,14 +23,28 @@
         </div>
         <div class="col-4 d-flex flex-row justify-content-center">
           <button
-            class="btn btn-success me-5"
-            @click="updateParam(param.param)"
-          >
-            Update
-          </button>
-          <button class="btn btn-danger" @click="deleteParam(param.param)">
-            Delete
-          </button>
+          type="button"
+          class="btn text-white btn-success icon-btn me-4"
+          @click="updateParam(param.param)"
+        >
+          <font-awesome-icon
+            :icon="['fas', 'upload']"
+            size="lg"
+            style="color: #ffffff"
+          />
+        </button>
+        <button
+          type="button"
+          class="btn text-white btn-danger icon-btn "
+          @click="deleteParam(param.param)"
+        >
+          <font-awesome-icon
+            :icon="['fas', 'trash']"
+            size="lg"
+            style="color: #ffffff"
+          />
+        </button>
+          
         </div>
       </div>
     </div>
@@ -35,7 +53,6 @@
   
   <script>
 import { mapActions, mapGetters } from "vuex";
-import jumbotronHeader from "../components/jumbotronHeading.vue";
 export default {
   data() {
     return {};
@@ -43,9 +60,7 @@ export default {
   computed: {
     ...mapGetters(["paramsList", "ros"]),
   },
-  components: {
-    jumbotronHeader,
-  },
+  components: {},
   methods: {
     ...mapActions(["updateParamsListAction"]),
     updateParam(param) {
@@ -73,12 +88,10 @@ export default {
   },
 };
 </script>
-  
-  
-  <style>
-.params-page {
-  min-height: 100vh;
-  padding: 20px;
-  padding-top: 0;
+ 
+<style>
+.param_card_body{
+  max-height:37vh;
+  overflow-y: scroll;
 }
 </style>

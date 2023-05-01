@@ -1,22 +1,30 @@
 <template>
-  <div class="d-flex flex-column align-items-center">
+  <div class="camera_container mt-4">
     <img id="camera" :src="stream_link" />
-
-    <select
-      class="form-select mt-2"
-      style="max-width: 400px"
-      aria-label="image_topic"
-      v-model="image_topic_name"
-      @change="subscribeImage($event.target.value)"
-    >
-      <option
-        :value="topic"
-        v-for="(topic, index) in image_topics_list"
-        :key="index"
+    <div class="btn-group dropend">
+      <button
+        type="button"
+        class="btn btn_orange drop_down_btn"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
       >
-        {{ topic }}
-      </option>
-    </select>
+        <font-awesome-icon :icon="['fas', 'gear']"  style="color: white"/>
+      </button>
+      <ul class="dropdown-menu">
+        <li>
+          <button
+            class="dropdown-item"
+            type="button"
+            :class="{ active: this.image_topic_name == topic }"
+            v-for="(topic, index) in image_topics_list"
+            @click="setImageTopic(topic)"
+             :key="index"
+          >
+            {{ topic }}
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -42,6 +50,10 @@ export default {
     },
   },
   methods: {
+    setImageTopic(topic){
+      this.image_topic_name = topic;
+      this.subscribeImage(topic);
+    },
     subscribeImage(topic) {
       //   this.img_listner = this.ros.Topic({
       //     ros: this.ros,
@@ -87,15 +99,19 @@ export default {
 </script>
 
 <style scoped>
-#camera {
-  width: 640px;
-  height: 480px;
-  background-color: black;
+.camera_container {
+  position: fixed;
+  width: 480px;
 }
-@media screen and (max-width: 1024px) {
-  #camera {
-    width: 45vw;
-    height: 34.6vw;
-  }
+.camera_container > .btn-group {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+}
+#camera {
+  width: 480px;
+  height: 360px;
+  border-radius: 10px;
+  background-color: black;
 }
 </style>

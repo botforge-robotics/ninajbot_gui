@@ -1,251 +1,198 @@
 <template>
-  <div class="mapping-page h-100">
-    <jumbotron-Header
-      :title="running_nav_node ? 'Navigation' : 'Mapping'"
-    ></jumbotron-Header>
-    <div class="d-flex mt-4 flex-row w-100 text-center align-items-center">
-      <p
-        class="sec-title col-4 fs-3 fw-semibold fst-italic"
-        style="width: 520px"
-      >
-        Camera Feed
-      </p>
-      <p class="sec-title col-4 fs-3 fw-semibold fst-italic">Control</p>
-      <p
-        class="sec-title col-4 fs-3 fw-semibold fst-italic d-xl-block d-lg-none"
-        style="width: 640px"
-      >
-        Map
-      </p>
+  <div class="home-page">
+    <div id="map_container"></div>
+    <div id="noMapContainer" v-if="!running_map_node && !running_nav_node">
+      <font-awesome-icon
+        :icon="['fas', 'map-location-dot']"
+        size="lg"
+        style="color: #000000"
+      />
     </div>
-    <div class="teleopConatiner">
-      <div
-        class="
-          d-flex
-          flex-xl-row flex-lg-column
-          justify-content-evenly
-          align-items-center
-        "
-      >
-        <div class="col-lg-12 col-xl-6 d-flex flex-row">
-          <image-view class="col-6 p-0"></image-view>
-          <joy-stick class="col-6 ps-3"></joy-stick>
-        </div>
-        <p
-          class="
-            sec-title
-            col-lg-12
-            text-center
-            mt-lg-3
-            fs-3
-            fw-semibold
-            fst-italic
-            d-xl-none d-lg-block
-          "
-          style="width: 640px"
-        >
-          Map
-        </p>
-        <div class="d-flex flex-lg-row">
-          <div
-            class="d-flex flex-lg-column d-xl-none me-5 justify-content-evenly"
-          >
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @touchstart="zoom_btn = true"
-              @touchend="zoom_btn = false"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-arrows-angle-expand me-2"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707z"
-                />
-              </svg>
-              Zoom
-            </button>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @touchstart="pan_btn = true"
-              @touchend="pan_btn = false"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-arrows-move me-2"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10zM.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708l-2-2zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8z"
-                />
-              </svg>
-              Pan
-            </button>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @touchstart="localize_btn = true"
-              @touchend="localize_btn = false"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-geo me-2"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"
-                />
-              </svg>
-              Localize
-            </button>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @touchstart="goal_btn = true"
-              @touchend="goal_btn = false"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-geo-alt-fill"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"
-                />
-              </svg>
-              Goal
-            </button>
-          </div>
-          <map-view class="col-xl-4 col-lg-12 p-0 mt-lg-1"></map-view>
-        </div>
-      </div>
-    </div>
-
+    <image-view></image-view>
+    <joy-stick></joy-stick>
+    <omnibar :speed="speed" :omni_title="omniTitle"></omnibar>
     <!-- buttons nav,map, save -->
     <div
-      class="
-        d-flex
-        flex-row
-        justify-content-between
-        align-items-center
-        w-100
-        mt-4
-      "
+      class="d-flex flex-column justify-content-between align-items-start mt-4 map_btns"
     >
-      <div>
+      <div class="d-flex flex-column justify-content-evenly">
         <button
           type="button"
-          class="btn me-xl-5 me-lg-2"
-          :class="{
-            'btn-success': !running_map_node,
-            'btn-danger': running_map_node,
-          }"
-          @click="mapStartStop"
-          :disabled="map_btn_busy"
-          v-if="!running_nav_node"
+          class="btn icon-btn btn_black"
+          @touchstart="zoom_btn = true"
+          @touchend="zoom_btn = false"
         >
-          <span
-            class="spinner-grow spinner-grow-sm"
-            role="status"
-            aria-hidden="true"
-            v-if="map_btn_busy"
-          ></span>
-          {{
-            map_btn_busy
-              ? running_map_node
-                ? "Stopping"
-                : "Starting"
-              : running_map_node
-              ? "Stop Mapping"
-              : "Start Mapping"
-          }}
+          <font-awesome-icon
+            :icon="['fas', 'expand']"
+            size="lg"
+            style="color: #ffffff"
+          />
         </button>
         <button
           type="button"
-          class="btn btn-primary me-xl-5 me-lg-2"
-          data-bs-toggle="modal"
-          data-bs-target="#navStartModal"
-          :class="{
-            'btn-success': !running_nav_node,
-            'btn-danger': running_nav_node,
-          }"
-          v-if="!running_map_node"
+          class="btn icon-btn btn_black"
+          @touchstart="pan_btn = true"
+          @touchend="pan_btn = false"
         >
-          {{ running_nav_node ? "Stop Navigation" : "Start Navigation" }}
+          <font-awesome-icon
+            :icon="['fas', 'up-down-left-right']"
+            size="lg"
+            style="color: #ffffff"
+          />
         </button>
-        <div
-          class="form-check mt-4 d-lg-none d-xl-block"
-          v-if="running_nav_node"
+        <button
+          type="button"
+          class="btn icon-btn btn_black"
+          @click="
+            goal_checkbox_btn = false;
+            poseEstimateBtn = true;
+          "
+          :class="{ 'opacity-50': !running_nav_node || goal_checkbox_btn }"
         >
-          <input
-            class="form-check-input"
-            type="checkbox"
-            v-model="poseEstimateBtn"
-            @click="goal_checkbox_btn = false"
-            id="localizeBtn"
+          <font-awesome-icon
+            :icon="['fas', 'map-pin']"
+            size="lg"
+            style="color: #ffffff"
           />
-          <label class="form-check-label" for="localizeBtn">
-            Pose Estimate
-          </label>
-        </div>
-        <div
-          class="form-check mt-4 d-lg-none d-xl-block"
-          v-if="running_nav_node"
+        </button>
+        <button
+          type="button"
+          class="btn icon-btn btn_black"
+          @click="
+            poseEstimateBtn = false;
+            goal_checkbox_btn = true;
+          "
+          :class="{ 'opacity-50': !running_nav_node || poseEstimateBtn }"
         >
-          <input
-            class="form-check-input"
-            type="checkbox"
-            v-model="goal_checkbox_btn"
-            @click="poseEstimateBtn = false"
-            id="localizeBtn"
+          <font-awesome-icon
+            :icon="['fas', 'location-dot']"
+            size="lg"
+            style="color: #ffffff"
           />
-          <label class="form-check-label" for="localizeBtn"> Send Goal </label>
-        </div>
+        </button>
         <button
           type="button"
           data-bs-toggle="modal"
           data-bs-target="#savemap"
-          class="btn text-white me-xl-5 me-lg-2 orange-Btn"
-          :disabled="!running_map_node"
-          v-if="!running_nav_node"
+          class="btn text-white btn_black icon-btn"
+          style="backgroundcolor: green"
+          v-show="!running_nav_node && running_map_node"
         >
-          Save Map
+          <font-awesome-icon
+            :icon="['fas', 'floppy-disk']"
+            size="lg"
+            style="color: #ffffff"
+          />
         </button>
       </div>
-      <div class="d-flex w-50 flex-row justify-content-end">
-        <div class="d-flex flex-column me-4">
-          <p><strong>Zoom: </strong>CTRL + Mouse L click & drag.</p>
-          <p><strong>Pan: </strong>SHIFT + Mouse L click & drag.</p>
-        </div>
-        <div class="d-flex flex-column" v-if="running_nav_node">
-          <p>
-            <strong>Goal Publish: </strong>Disable Pose estimate button, Mouse L
-            click(position) & drag(Orientation).
-          </p>
-          <p>
-            <strong>Pose Estimate: </strong>Enable Pose estimate button, Mouse L
-            click(position) & drag(Orientation).
-          </p>
-        </div>
-      </div>
+    </div>
+    <div
+      class="d-flex flex-column justify-content-between align-items-start mt-4 navgation_btns"
+    >
+      <button
+        type="button"
+        class="btn icon-btn"
+        :class="{
+          btn_orange: !running_map_node,
+          'btn-danger': running_map_node,
+        }"
+        @click="mapStartStop"
+        :disabled="map_btn_busy"
+        v-if="!running_nav_node"
+      >
+        <span
+          class="spinner-grow spinner-grow-sm"
+          role="status"
+          aria-hidden="true"
+          v-if="map_btn_busy"
+        ></span>
+        <font-awesome-icon
+          :icon="['fas', 'map-location-dot']"
+          size="lg"
+          style="color: #ffffff"
+          v-if="!map_btn_busy && !running_map_node"
+        />
+        <font-awesome-icon
+          :icon="['fas', 'arrow-right-from-bracket']"
+          size="lg"
+          style="color: #ffffff"
+          v-if="!map_btn_busy && running_map_node"
+        />
+      </button>
+      <button
+        type="button"
+        class="btn icon-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#navStartModal"
+        :class="{
+          btn_orange: !running_nav_node,
+          'btn-danger': running_nav_node,
+        }"
+        v-if="!running_map_node"
+      >
+        <font-awesome-icon
+          :icon="['fas', 'route']"
+          size="lg"
+          style="color: #ffffff"
+          v-if="!running_nav_node"
+        />
+        <font-awesome-icon
+          :icon="['fas', 'arrow-right-from-bracket']"
+          size="lg"
+          style="color: #ffffff"
+          v-if="running_nav_node"
+        />
+      </button>
+
+      <button
+        type="button"
+        class="btn text-white btn_orange icon-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#settingsModal"
+      >
+        <font-awesome-icon
+          :icon="['fas', 'gears']"
+          size="lg"
+          style="color: #ffffff"
+        />
+      </button>
+      <button type="button" class="btn text-white btn_orange icon-btn"
+      data-bs-toggle="modal"
+        data-bs-target="#ws2812bModal"
+      >
+        <font-awesome-icon
+          :icon="['fas', 'sliders']"
+          size="lg"
+          style="color: #ffffff"
+        />
+      </button>
+
+      <button
+        type="button"
+        class="btn text-white btn_orange icon-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#ntsModal"
+      >
+        <font-awesome-icon
+          :icon="['fas', 'circle-nodes']"
+          size="lg"
+          style="color: #ffffff"
+        />
+      </button>
+      <button
+        type="button"
+        class="btn text-white btn_orange icon-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#infoModal"
+      >
+        <font-awesome-icon
+          :icon="['fas', 'circle-info']"
+          size="lg"
+          style="color: #ffffff"
+        />
+      </button>
+
+    
     </div>
     <!-- Map Modal -->
     <div
@@ -303,7 +250,7 @@
             </button>
             <button
               type="button"
-              class="btn orange-Btn"
+              class="btn btn_orange"
               :disabled="map_save_btn_busy || v$.map_name.$error"
               @click="saveMap"
             >
@@ -331,7 +278,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="navStartModalLabel">
-              {{ running_nav_node ? "Stop navigation?" : "Launch navigation?" }}
+              {{ running_nav_node ? "Stop navigation?" : "Start navigation?" }}
             </h1>
             <button
               type="button"
@@ -411,11 +358,11 @@
             </button>
             <button
               type="button"
-              class="btn me-5 btn-success"
+              class="btn me-5"
               @click="navStartStop"
               :disabled="v$.navMapName.$error"
               :class="{
-                'btn-success': !running_nav_node,
+                btn_orange: !running_nav_node,
                 'btn-danger': running_nav_node,
               }"
             >
@@ -439,6 +386,11 @@
         </div>
       </div>
     </div>
+    <ntsModal></ntsModal>
+    <settingsComp></settingsComp>
+    <infoComp> </infoComp>
+    <ws2812bComp></ws2812bComp>
+    <toast-comp></toast-comp>
   </div>
 </template>
 
@@ -446,12 +398,16 @@
 /* eslint-disable */
 import imageView from "../components/imageView.vue";
 import joyStick from "../components/joystickComp.vue";
-import jumbotronHeader from "../components/jumbotronHeading.vue";
 import { mapGetters, mapMutations } from "vuex";
-import mapView from "../components/mapComp.vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required, alpha, minLength, maxLength } from "@vuelidate/validators";
 import ROSLIB from "roslib/src/RosLib";
+import omnibar from "../components/omniBar.vue";
+import ntsModal from "../components/NtsView.vue";
+import settingsComp from "../components/settingsComp.vue";
+import infoComp from "../components/infoComp.vue";
+import ws2812bComp from "../components/ws2812bComp.vue"
+import toastComp from "../components/toastComp.vue"
 export default {
   setup: () => ({ v$: useVuelidate() }),
   data() {
@@ -482,13 +438,13 @@ export default {
       local_path_shape: null,
       global_path: null,
       local_path: null,
-      poseEstimateBtn: false,
+      poseEstimateBtn: true,
       initialPosePub: false,
       zoom_btn: false,
       pan_btn: false,
-      localize_btn: false,
-      goal_btn: false,
       goal_checkbox_btn: false,
+      speed: 0.0,
+      vel_sub: null,
     };
   },
   computed: {
@@ -500,6 +456,11 @@ export default {
       "api_stop_service_name",
       "api_srv_type",
     ]),
+    omniTitle() {
+      if (this.running_nav_node) return "Navigation";
+      else if (this.running_map_node) return "Mapping";
+      else return "Teleop";
+    },
   },
   validations() {
     return {
@@ -520,8 +481,12 @@ export default {
   components: {
     imageView,
     joyStick,
-    jumbotronHeader,
-    mapView,
+    omnibar,
+    ntsModal,
+    settingsComp,
+    infoComp,
+    toastComp,
+    ws2812bComp
   },
   methods: {
     ...mapMutations([
@@ -713,11 +678,17 @@ export default {
   },
   mounted() {
     let vm = this;
-    if (screen.width > 1024) {
-      // resixze image view
-      document.getElementById("camera").style.width = "480px";
-      document.getElementById("camera").style.height = "360px";
-    }
+    vm.vel_sub = new ROSLIB.Topic({
+      ros: vm.ros,
+      name: "odom",
+      messageType: "nav_msgs/Odometry",
+    });
+    vm.vel_sub.subscribe(function (msg) {
+      let vel = parseFloat(msg.twist.twist.linear.x).toFixed(2);
+      if (vel == -0.0) vel = 0.0;
+      vm.speed = vel;
+    });
+
     // register service clients
     this.startServiceClient = new ROSLIB.Service({
       ros: this.ros,
@@ -736,9 +707,10 @@ export default {
     }
     // Create the main viewer.
     var viewer = new ROS2D.Viewer({
-      divID: "map",
-      width: screen.width > 1024 ? 700 : 800,
-      height: screen.width > 1024 ? 525 : 600,
+      divID: "map_container",
+      width: document.getElementById("map_container").offsetWidth,
+      height: document.getElementById("map_container").offsetHeight,
+      background: "#e9ecef",
     });
     // Add zoom to the viewer.
     var zoomView = new ROS2D.ZoomView({
@@ -867,9 +839,9 @@ export default {
             var pos = viewer.scene.globalToRos(event.stageX, event.stageY);
             var goalPose = vm.navGoal.endGoalSelection(pos);
             if (
-              (vm.poseEstimateBtn || vm.localize_btn) &&
+              vm.poseEstimateBtn &&
               vm.running_nav_node &&
-              (!vm.goal_checkbox_btn || !vm.goal_btn)
+              !vm.goal_checkbox_btn
             ) {
               var poseMsg = new ROSLIB.Message({
                 header: {
@@ -887,9 +859,9 @@ export default {
               });
               vm.initialPosePub.publish(poseMsg);
             } else if (
-              (!vm.poseEstimateBtn || !vm.localize_btn) &&
+              !vm.poseEstimateBtn &&
               vm.running_nav_node &&
-              (vm.goal_checkbox_btn || vm.goal_btn)
+              vm.goal_checkbox_btn
             ) {
               //  Robot pose marker
               vm.goalContainer.addChild(vm.goalMarker);
@@ -987,7 +959,6 @@ export default {
         if (this.prev_markers !== null) {
           viewer.scene.removeChild(prev_markers);
         }
-
         viewer.addObject(scan_markers);
         prev_markers = scan_markers;
       });
@@ -1024,33 +995,56 @@ export default {
 
 
 <style scoped>
-.mapping-page {
-  min-height: 100vh;
+.home-page {
   padding: 20px;
   padding-top: 0;
+  position: relative;
 }
-.tab-content {
-  min-height: 330px;
+#map_container {
+  position: fixed;
+  min-height: 100vh;
+  min-width: 100vw;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  background-color: #7e7e7e;
 }
-.tab-pane {
-  min-height: 330px;
+#noMapContainer {
+  position: fixed;
+  min-height: 100vh;
+  min-width: 100vw;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  background-color: #e7e7e7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-#zone_joystick {
-  min-height: 330px;
+#noMapContainer > svg {
+  height: 15vw;
+  opacity: 0.1;
 }
-img #camera {
-  max-width: 480px !important;
-  max-height: 360px !important;
-  background-color: black;
+#noMapContainer > svg:hover {
+  color: black !important;
 }
-.orange-Btn {
-  width: 100px;
-  background-color: #f2771a !important;
-  color: white !important;
+.map_btns {
+  position: fixed;
+  bottom: 30px;
+  left: 10px;
+  height: auto;
 }
-.orange-Btn:hover {
-  background-color: #bd5404 !important;
-  color: rgb(216, 216, 216) !important;
+.navgation_btns {
+  position: fixed;
+  top: 60px;
+  right: 10px;
+  height: auto;
+}
+.navgation_btns > button {
+  margin-bottom: 5px;
+}
+.map_btns > div > button {
+  margin-bottom: 5px;
 }
 @media screen and (max-width: 1024px) {
   .sec-title {

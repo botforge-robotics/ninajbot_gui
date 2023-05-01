@@ -1,7 +1,6 @@
 <template>
-  <div class="log-page h-100">
-    <jumbotron-Header title="Log"></jumbotron-Header>
-    <div class="mt-3 w-100">
+  
+    <div class="mt-3 w-100 log_comp">
       <div
         class="alert"
         :class="{
@@ -21,12 +20,11 @@
         ><span class="text-decoration-underline">{{ log.file }}</span>
       </div>
     </div>
-  </div>
+
 </template>
   
   <script>
 import { mapGetters } from "vuex";
-import jumbotronHeader from "../components/jumbotronHeading.vue";
 export default {
   data() {
     return {};
@@ -35,7 +33,6 @@ export default {
     ...mapGetters(["logs"]),
   },
   components: {
-    jumbotronHeader,
   },
   methods: {},
   mounted() {},
@@ -44,9 +41,8 @@ export default {
   
   
   <style>
-.log-page {
-  min-height: 100vh;
-  padding: 20px;
-  padding-top: 0;
+.log_comp{
+  max-height:38vh;
+  overflow-y:scroll;
 }
 </style>

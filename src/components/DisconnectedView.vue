@@ -1,10 +1,10 @@
 <template>
-  <div class="disconnected-page h-100">
-    <h1 class="text-muted text-center">Ninjabot Disconnected</h1>
+  <div class="disconnected-page">
+    <h1 class="text-muted text-center">Disconnected</h1>
     <div
       class="d-flex flex-row justify-content-center align-items-center h-100"
     >
-      <img src="../assets/robot.png" alt="" style="width=600px;" class="me-3" />
+      <img id="robot_image" src="../assets/robot.png" alt="" style="width=600px;" class="me-3" />
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="150"
@@ -26,13 +26,16 @@
   margin-top: 150px;
 }
 .disconnected-page {
-  min-height: 80vh;
+  min-height: 73vh;
 }
 .disconnected-page div {
   min-height: 60vh;
 }
 .disconnected-page div svg {
   opacity: 0.5;
+}
+#robot_image{
+  width:30vw
 }
 @media screen and (max-width: 1024px) {
   .disconnected-page img {

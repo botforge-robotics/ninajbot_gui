@@ -10,86 +10,51 @@
           width="250"
         />
       </div>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <router-link to="/teleop" active-class="active" class="nav-link"
-              >Teleop</router-link
-            >
-          </li>
-          <li class="nav-item">
-            <router-link to="/aux" active-class="active" class="nav-link"
-              >Auxilaries</router-link
-            >
-          </li>
-          <li class="nav-item">
-            <router-link
-              to="/mappingnNav"
-              active-class="active"
-              class="nav-link"
-              >Mapping & Navigation</router-link
-            >
-          </li>
-          <li class="nav-item">
-            <router-link to="/nts" active-class="active" class="nav-link"
-              >Nodes,Topics & Services</router-link
-            >
-          </li>
-
-          <li class="nav-item">
-            <router-link to="/params" active-class="active" class="nav-link"
-              >Params</router-link
-            >
-          </li>
-          <li class="nav-item">
-            <router-link to="/3d" active-class="active" class="nav-link"
-              >3dModel</router-link
-            >
-          </li>
-          <li class="nav-item">
-            <router-link to="/log" active-class="active" class="nav-link"
-              >Log</router-link
-            >
-          </li>
-        </ul>
-        <div class="d-flex">
-          <input
-            class="form-control me-2"
-            placeholder="Robot IP"
-            id="ip-input"
-            v-model="robotIp"
-            :disabled="isRoboConnected"
-          />
-          <button
-            v-if="!isRoboConnected"
-            class="connect-btn btn btn-outline-success"
-            @click="
-              connectRobot('ws://' + this.robotIp + ':9090');
-              updateRobotIP({ data: this.robotIp });
-            "
-          >
-            Connect
-          </button>
-          <button
-            v-if="isRoboConnected"
-            class="connect-btn btn btn-outline-danger"
-            @click="disconnectRobot"
-          >
-            Disconnect
-          </button>
-        </div>
-      </div>
+      <h2 style="marginRight:11rem;">Ninjabot(AMR)</h2>
+      <div></div>
+    </div>
+    <div class="d-flex">
+      <button
+        v-if="isRoboConnected"
+        class="icon-btn btn btn-danger"
+        @click="() => {}"
+      >
+        <font-awesome-icon :icon="['fas', 'power-off']" size="lg" style="color: white" />
+      </button>
+      <button
+        v-if="!isRoboConnected"
+        class="icon-btn btn btn-success"
+        @click="
+          connectRobot('ws://' + this.robotIp + ':9090');
+          updateRobotIP({ data: this.robotIp });
+        "
+      >
+        <font-awesome-icon
+          :icon="['fas', 'link']"
+          shake
+          size="lg"
+          style="color: white"
+        />
+      </button>
+      <button
+        v-if="isRoboConnected"
+        class="icon-btn btn btn-danger"
+        @click="disconnectRobot"
+      >
+        <font-awesome-icon :icon="['fas', 'link-slash']" size="lg" style="color: white" />
+      </button>
     </div>
   </nav>
   <div class="page-container">
-    <router-view />
-    <toast-comp></toast-comp>
+    <disconnectView v-if="!isRoboConnected"> </disconnectView>
+    <homeView v-if="isRoboConnected"></homeView>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import toastComp from "./components/toastComp.vue";
+import disconnectView  from "./components/DisconnectedView.vue";
+import homeView from "./views/HomeView.vue";
 export default {
   data() {
     return {
@@ -98,7 +63,8 @@ export default {
     };
   },
   components: {
-    toastComp,
+    disconnectView,
+    homeView
   },
   computed: {
     ...mapGetters(["isRoboConnected", "ros"]),
@@ -132,11 +98,11 @@ export default {
       vm.body_ws2812b_pub();
       vm.left_ws2812b_pub();
       vm.right_ws2812b_pub();
-      vm.$router.push({ name: "teleop" });
       vm.showToast({
         time: Date.now().toString(),
         message: "Connected to Ninjabot",
       });
+
     });
 
     this.ros.on("error", function (error) {
@@ -145,11 +111,11 @@ export default {
 
     this.ros.on("close", function () {
       console.log("Connection to websocket server closed.");
-      vm.$router.push("/");
       vm.showToast({
         time: Date.now().toString(),
         message: "Disconnected from Ninjabot",
       });
+
     });
 
     // ros log
@@ -174,33 +140,4 @@ export default {
 };
 </script>
 <style>
-.page-container {
-  width: 100%;
-  min-height: 100vh;
-}
-input.form-control:focus {
-  border-color: #f2771a !important;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgb(242, 119, 26);
-}
-.page-container {
-  margin-top: 60px;
-}
-@media screen and (max-width: 1024px) {
-  .page-container {
-    margin-top: 53px;
-  }
-  .navbar-brand {
-    width: 120px;
-  }
-  .navbar-nav li {
-    font-size: 13px;
-  }
-  #ip-input {
-    width: 130px;
-  }
-  .connect-btn {
-    font-size: 13px !important;
-    font-weight: 500 !important;
-  }
-}
 </style>

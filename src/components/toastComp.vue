@@ -48,4 +48,7 @@ export default {
 .toast-header img {
   width: 17px;
 }
+.toast-container{
+  z-index:5;
+}
 </style>
